@@ -1,0 +1,1 @@
+#include "$NAME$Str.h"
