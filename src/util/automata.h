@@ -237,13 +237,13 @@ class RangeSetter {
 		};
 
 		parser.setTrans("ch1",'-',"ch2");
-		parser.getNode("ch1").defaultTransition = [=,this](char ch) -> FiniteAutomata<char,MealyTransition<char>>::NodeType * {
+		parser.getNode("ch1").defaultTransition = [=](char ch) -> FiniteAutomata<char,MealyTransition<char>>::NodeType * {
 			this->addTrans(src,this->ch1,dest,output);
 			this->ch1 = ch;
 			return &this->parser.getNode("ch1");
 		};
 
-		parser.getNode("ch2").defaultTransition = [=,this](char ch) -> FiniteAutomata<char,MealyTransition<char>>::NodeType * {
+		parser.getNode("ch2").defaultTransition = [=](char ch) -> FiniteAutomata<char,MealyTransition<char>>::NodeType * {
 			this->addTrans(src,Range<C>(this->ch1,ch),dest,output);
 			this->ch1 = 0;
 			return &this->parser.getNode("start");
