@@ -3,14 +3,14 @@
 namespace mtg {
 
 Counter::Counter(std::string name, int powerModifier, int toughnessModifier):
-    name(name),
-    powerModifier(powerModifier),
-    toughnessModifier(toughnessModifier)
+    name_(name),
+    powerModifier_(powerModifier),
+    toughnessModifier_(toughnessModifier)
 {}
 
 bool Counter::operator==(Counter const & other) const
 {
-    return name == other.name;
+    return name_ == other.name_;
 }
 
 Counter Counter::poison("poison");

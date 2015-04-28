@@ -7,12 +7,15 @@
 namespace mtg {
 
 class Counter {
+    std::string name_;
+    int powerModifier_;
+    int toughnessModifier_;
 public:
-    std::string const name;
-    int const powerModifier;
-    int const toughnessModifier;
-    
     Counter(std::string name, int powerModifier = 0, int toughnessModifier = 0);
+    
+    std::string name() const;
+    int powerModifier() const;
+    int toughnessModifier() const;
     
     bool operator==(Counter const & other) const;
 
@@ -32,7 +35,7 @@ namespace std {
 template<>
 struct hash<mtg::Counter> {
     std::size_t operator()(mtg::Counter const & counter) const {
-        return hash<std::string>()(counter.name);
+        return hash<std::string>()(counter.name());
     }
 };
     
