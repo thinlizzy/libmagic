@@ -4,7 +4,7 @@
 #include <string>
 #include "Card.h"
 #include "types/LandType.h"
-#include "../../../util/singleton.h"
+#include "../util/singleton.h"
 
 namespace mtg {
 
