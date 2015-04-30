@@ -13,6 +13,10 @@ bool Counter::operator==(Counter const & other) const
     return name_ == other.name_;
 }
 
+std::string Counter::name() const { return name_; }
+int Counter::powerModifier() const { return powerModifier_; }
+int Counter::toughnessModifier() const { return toughnessModifier_; }
+
 Counter Counter::poison("poison");
 Counter Counter::plusOneOne("+1/+1",1,1);
 Counter Counter::minusOneOne("-1/-1",-1,-1);
