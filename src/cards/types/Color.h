@@ -3,11 +3,8 @@
 
 namespace mtg {
 
-// TODO this needs redesign. review the interactions with Card, Colors.h and Cost.ManaPattern
-
-// TODO make colorless at the first value = 0, but see other TODOs first
-
-// TODO use bit values?
+// enumeration used to represent unique color values and even a colorless one if the context applies
+// they are conveniently ordered to work as array indices and quantities for bit shifting too
 enum Color {
 	green,
 	blue,

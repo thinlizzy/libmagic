@@ -4,6 +4,8 @@
 #include "Zone.h"
 #include "OwnedCards.h"
 #include "Counter.h"
+#include "ManaPool.h"
+#include "../cards/types/Color.h"
 #include <unordered_map>
 #include <string>
 
@@ -18,9 +20,12 @@ public:
     OwnedCards cards;
 
 	int life;
+	ManaPool manaPool;
+
     std::unordered_map<Counter,unsigned> counters;
     std::unordered_set<Permanent *> attachments;      // enchant player cards
     
+
     explicit Player(std::string name);
     std::string const & getName() const;
     

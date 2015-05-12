@@ -43,6 +43,10 @@ class Parser {
 		emit();
 		newDigit(d);
 	}
+	void newSnow() {
+		newChar('S');
+		acc.generic = 1;
+	};
 public:
 	Parser()
 	{
@@ -82,12 +86,22 @@ public:
 			parser.setTrans("start",colors->colorText[ci],"color").output = bind(&Parser::newChar,this,_1);
 			parser.setTrans("digit",colors->colorText[ci],"color").output =
 			parser.setTrans("color",colors->colorText[ci],"color").output =
-			parser.setTrans("XYZ",colors->colorText[ci],"color").output =
-														bind(&Parser::emitAndNewChar,this,_1);
+			parser.setTrans("XYZ",colors->colorText[ci],"color").output = bind(&Parser::emitAndNewChar,this,_1);
 			parser.setTrans("slash",colors->colorText[ci],"color").output = [&](char c) {
 				acc.setChar(c);
 			};
 		}
+
+		// S
+		parser.setTrans("start",'S',"XYZ").output = [this](char d) {
+			newSnow();
+		};
+		parser.setTrans("digit",'S',"XYZ").output =
+		parser.setTrans("color",'S',"XYZ").output =
+		parser.setTrans("XYZ",'S',"XYZ").output = [this](char d) {
+			emit();
+			newSnow();
+		};
 
 		// {}
 		parser.setTrans("start",'{',"start").output = [&](char c) { sameSymbol = true; };
@@ -121,8 +135,7 @@ public:
 	}
 };
 
-// TODO make it a threadlocal
-Parser parser;
+thread_local Parser parser;
 
 Cost::Cost()
 {
@@ -190,6 +203,7 @@ ManaPattern & ManaPattern::setChar(char c)
         case 'Y': bit = black+2; break;
         case 'Z': bit = black+3; break;
         case 'P': bit = black+4; break;
+        case 'S': bit = black+5; break;
         default: throw std::invalid_argument(c + std::string(" is a invalid char to set mana pattern"));
 	}
 	colors.set(bit);

@@ -10,7 +10,7 @@
 namespace mtg {
 
 struct ManaPattern {
-	typedef std::bitset<9> Specific;	// green, blue, red, white, black, x, y, z, p
+	typedef std::bitset<10> Specific;	// green, blue, red, white, black, x, y, z, p, s
 	Specific colors;
 	unsigned char generic;
 
@@ -43,8 +43,6 @@ public:
 
 	bool operator==(Cost const & cost) const;
 	bool operator!=(Cost const & cost) const;
-
-	// TODO do the matcher
 private:
 	void parse(std::string const & cost);
 };

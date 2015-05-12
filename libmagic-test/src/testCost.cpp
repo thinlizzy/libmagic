@@ -88,4 +88,24 @@ namespace tut {
 		ensure( cost.getColors().hasColor(mtg::green) );
     }   
 
+    template<>
+    template<>
+    void testobject::test<8>()
+    {
+        set_test_name("snow");
+		mtg::Cost cost = "S1";
+		ensure_equals( cost.convertedManaCost() , 2 );
+		ensure( cost.getColors().monoColored() );
+    }
+
+    template<>
+    template<>
+    void testobject::test<9>()
+    {
+        set_test_name("snow with colors");
+		mtg::Cost cost = "G2S1";
+		ensure_equals( cost.convertedManaCost() , 5 );
+		ensure( cost.getColors().hasColor(mtg::green) );
+    }
+
 }
