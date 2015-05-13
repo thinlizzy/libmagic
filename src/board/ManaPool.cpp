@@ -12,11 +12,6 @@ void ManaPool::clear()
 	pool.clear();
 }
 
-unsigned ManaPool::count() const
-{
-	return pool.size();
-}
-
 void ManaPool::add(Color color)
 {
 	pool.push_back({color});
@@ -37,19 +32,40 @@ void ManaPool::add(Color color, Mana::Source source, std::initializer_list<Mana:
 	}
 }
 
+auto ManaPool::getByColor(Color color) const -> Range<ByColorCIt>
+{
+	return Range<ByColorCIt>{byColor.equal_range(color)};
+}
+
+auto ManaPool::getBySource(Mana::Source source) const -> Range<BySourceCIt>
+{
+	return Range<BySourceCIt>{bySource.equal_range(source)};
+}
+
+auto ManaPool::getByAnnotation(Mana::Annotation annotation) const -> Range<ByAnnotationCIt>
+{
+	return Range<ByAnnotationCIt>{byAnnotation.equal_range(annotation)};
+}
+
+bool ManaPool::canCast(Cost const & cost, Mana::Annotations annotations = 0) const
+{
+	 // TODO: implement
+	return false;
+}
+
+void ManaPool::remove(ManaCRef it)
+{
+	 // TODO: implement
+}
+
 /*
-	auto colored = byColor.equal_range(color);
-	if( colored.first == byColor.end() ) {
-		doAdd(color);
-	} else {
 		auto it = std::find_if(colored.first, colored.second, [](auto e) {
 			return e.second->source == 0 && e.second->annotations == 0;
 		});
 		if( it == colored.second ) {
-			doAdd(color);
+			fufu
 		} else {
-			++it->second->quantity;
-			++cmc;
+			eeee
 		}
 	}
  */

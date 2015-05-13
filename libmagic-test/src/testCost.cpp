@@ -10,7 +10,7 @@ namespace {
 namespace tut { 
 
     typedef test_group<setup> tg;
-    tg factory4th_test_group("Cost");
+    tg cost_test_group("Cost");
     
     typedef tg::object testobject;
     
