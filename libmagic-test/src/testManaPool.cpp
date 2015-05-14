@@ -1,5 +1,6 @@
 #include <tut.h>
 #include <magic.h>
+#include <algorithm>
 
 namespace {
     struct setup {
@@ -12,6 +13,16 @@ namespace {
 				tut::ensure_equals( mana->color , color );
 			}
 			tut::ensure_equals( t , tot );
+		}
+
+		int countSnow() {
+			auto bs = pool.getBySource(mtg::Mana::snow);
+			return std::distance(bs.begin(),bs.end());
+		}
+
+		int count(mtg::Mana::Annotation annotation) {
+			auto ba = pool.getByAnnotation(annotation);
+			return std::distance(ba.begin(),ba.end());
 		}
     };
 }
@@ -31,7 +42,7 @@ namespace tut {
 		ensure_equals( pool.mana().size() , 0 );
 
 		auto bc = pool.getByColor(mtg::red);
-		ensure( bc.begin() == bc.end() );
+		ensure( bc.empty() );
     }
 
     template<>
@@ -44,7 +55,7 @@ namespace tut {
 		ensure_equals( pool.mana().size() , 1 );
 
 		auto bc = pool.getByColor(mtg::colorless);
-		ensure( bc.begin() != bc.end() );
+		ensure( ! bc.empty() );
 
 		checkAllColor(mtg::colorless,1);
     }
@@ -111,8 +122,45 @@ namespace tut {
 		ensure_equals( tar , 1 );
     }
 
-    // TODO test canCast
+    template<>
+    template<>
+    void testobject::test<5>()
+    {
+        set_test_name("remove");
 
-    // TODO test remove
+        pool.add(mtg::colorless);
+        pool.add(mtg::black, mtg::Mana::snow, {});
+        pool.add(mtg::black, {}, {mtg::Mana::abilities});
+        pool.add(mtg::white, mtg::Mana::snow, {mtg::Mana::abilities, mtg::Mana::artifact, });
+        pool.add(mtg::green, {}, {mtg::Mana::burnsOnlyAtEot});
+        pool.add(mtg::green, mtg::Mana::snow, {mtg::Mana::upkeep});
+        pool.add(mtg::green, mtg::Mana::snow, {mtg::Mana::spells});
+        pool.add(mtg::red, {}, {mtg::Mana::upkeep, mtg::Mana::creature});
+        pool.add(mtg::blue);
+
+		ensure_equals( pool.mana().size() , 9 );
+		ensure_equals( countSnow() , 4 );
+		ensure_equals( count(mtg::Mana::abilities) , 2 );
+		ensure_equals( count(mtg::Mana::artifact) , 1 );
+		ensure_equals( count(mtg::Mana::upkeep) , 2 );
+
+		// remove the first (and the only) white mana
+        auto bc = pool.getByColor(mtg::white);
+		ensure( ! bc.empty() );
+		pool.remove(*bc.begin());
+		ensure_equals( pool.mana().size() , 8 );
+		ensure_equals( countSnow() , 3 );
+		bc = pool.getByColor(mtg::white);
+		ensure( bc.empty() );
+		ensure_equals( count(mtg::Mana::abilities) , 1 );
+		ensure_equals( count(mtg::Mana::artifact) , 0 );
+
+		auto ba = pool.getByAnnotation(mtg::Mana::abilities);
+		ensure( ! ba.empty() );
+		auto blackManaAbilities = *ba.begin();
+		ensure_equals( blackManaAbilities->color , mtg::black );
+    }
+
+    // TODO test canCast
 }
 

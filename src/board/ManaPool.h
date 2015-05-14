@@ -24,6 +24,9 @@ struct Mana {
 	Color color;
 	Source source;
 	Annotations annotations;
+	bool operator==(Mana const & mana) const {
+		return color == mana.color && source == mana.source && annotations == mana.annotations;
+	}
 };
 
 class ManaPool {
@@ -60,6 +63,7 @@ private:
     	using Iterator = ByIterator<CIT>;
     	Iterator begin() { return Iterator{itPair.first}; }
     	Iterator end() { return Iterator{itPair.second}; }
+    	bool empty() const { return itPair.first == itPair.second; }
     };
 public:
 	ManaPool() = default;
@@ -74,9 +78,9 @@ public:
 	void add(Color color);
 	void add(Color color, Mana::Source source, std::initializer_list<Mana::Annotation> annotations);
 
-	bool canCast(Cost const & cost, Mana::Annotations annotations = 0) const;
+	void remove(ManaCRef manaRef);
 
-	void remove(ManaCRef it);
+	bool canCast(Cost const & cost, Mana::Annotations annotations = 0) const;
 };
 
 }

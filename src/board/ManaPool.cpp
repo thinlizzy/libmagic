@@ -47,28 +47,42 @@ auto ManaPool::getByAnnotation(Mana::Annotation annotation) const -> Range<ByAnn
 	return Range<ByAnnotationCIt>{byAnnotation.equal_range(annotation)};
 }
 
-bool ManaPool::canCast(Cost const & cost, Mana::Annotations annotations = 0) const
+template<typename C, typename T>
+void removeFrom(C & container, T key, ManaPool::ManaCRef manaRef)
+{
+	auto it_pair = container.equal_range(key);
+	auto it = std::find_if(it_pair.first, it_pair.second, [manaRef](auto e) {
+		return e.second == manaRef;
+	});
+	if( it != it_pair.second ) {
+		container.erase(it);
+	}
+}
+
+void ManaPool::remove(ManaCRef manaRef)
+{
+	removeFrom(byColor,manaRef->color,manaRef);
+
+	if( manaRef->source != 0 ) {
+		removeFrom(bySource,manaRef->source,manaRef);
+	}
+
+	if( manaRef->annotations != 0 ) {
+		for( unsigned a = 1; a <= Mana::burnsOnlyAtEot; a<<=1 ) {
+			auto annotation = static_cast<Mana::Annotation>(manaRef->annotations & a);
+			if( annotation != 0 ) {
+				removeFrom(byAnnotation,annotation,manaRef);
+			}
+		}
+	}
+
+	pool.erase(manaRef);
+}
+
+bool ManaPool::canCast(Cost const & cost, Mana::Annotations annotations) const
 {
 	 // TODO: implement
 	return false;
 }
-
-void ManaPool::remove(ManaCRef it)
-{
-	 // TODO: implement
-}
-
-/*
-		auto it = std::find_if(colored.first, colored.second, [](auto e) {
-			return e.second->source == 0 && e.second->annotations == 0;
-		});
-		if( it == colored.second ) {
-			fufu
-		} else {
-			eeee
-		}
-	}
- */
-
 
 } /* namespace mtg */
