@@ -1,7 +1,6 @@
 // generated include files  
 #include "ArtifactTypeStr.h"
 #include "CardTypeStr.h"
-#include "ColorStr.h"
 #include "CreatureTypeStr.h"
 #include "EnchantmentTypeStr.h"
 #include "LandTypeStr.h"

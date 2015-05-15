@@ -4,8 +4,6 @@
 #include "board/Targets.h"
 #include "board/Zone.h"
 
-#include "board/BoardStreamOps.h"
-
 #include "cards/Card.h"
 #include "cards/Cost.h"
 
@@ -13,6 +11,7 @@
 #include "cards/Land.h"
 #include "cards/Planeswalker.h"
 
-#include "cards/prototypes.h"
-
-#include "cards/CardStreamOps.h"
+#include "extra/prototypes.h"
+#include "extra/CardStreamOps.h"
+#include "extra/BoardStreamOps.h"
+#include "extra/CostParser.h"

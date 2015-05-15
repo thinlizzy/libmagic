@@ -41,9 +41,9 @@ void Factory4th::createColorless()
 	// create artifacts
 	CardStat alladinsLamp = prototypes->artifact;
 	alladinsLamp.name = "Alladin's Lamp";
-	alladinsLamp.cost = "10";
+	alladinsLamp.cost = parseCost("10");
 	alladinsLamp.text = 
-		"%X,%T: The next time you would draw a card this turn, instead look at the top X cards of your library, "
+		"{X},{T}: The next time you would draw a card this turn, instead look at the top X cards of your library, "
 		"put all but one of them on the bottom of your library in a random order, then draw a card. X can't be 0.";
 
 	cards.push_back(newCard(alladinsLamp,Expansion::fourth));

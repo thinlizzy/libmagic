@@ -2,9 +2,8 @@
 #define BOARD_STREAM_OPS_H_j432422388fd8fydst7324gg
 
 #include <ostream>
-#include "../cards/CardStreamOps.h"
-#include "Permanent.h"
-#include "Player.h"
+#include "../board/Permanent.h"
+#include "../board/Player.h"
 
 namespace mtg {
 

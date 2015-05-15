@@ -8,8 +8,6 @@ SET ENUM=ArtifactType
 %EPE% %SP%\%ENUM%.h %TP%\include.tpl +%GP%\generated.h %TP%\enum_include.tpl %GP%\%ENUM%Str.h %TP%\enum.tpl %GP%\%ENUM%Str.cpp
 SET ENUM=CardType
 %EPE% %SP%\%ENUM%.h %TP%\include.tpl +%GP%\generated.h %TP%\enum_include.tpl %GP%\%ENUM%Str.h %TP%\bitenum.tpl %GP%\%ENUM%Str.cpp
-SET ENUM=Color
-%EPE% %SP%\%ENUM%.h %TP%\include.tpl +%GP%\generated.h %TP%\enum_include.tpl %GP%\%ENUM%Str.h %TP%\enum.tpl %GP%\%ENUM%Str.cpp
 SET ENUM=CreatureType
 %EPE% %SP%\%ENUM%.h %TP%\include.tpl +%GP%\generated.h %TP%\enum_include.tpl %GP%\%ENUM%Str.h %TP%\enum.tpl %GP%\%ENUM%Str.cpp
 SET ENUM=EnchantmentType

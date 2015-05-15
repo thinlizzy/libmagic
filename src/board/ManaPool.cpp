@@ -83,6 +83,14 @@ bool ManaPool::canCast(Cost const & cost, Mana::Annotations annotations) const
 {
 	if( pool.size() < cost.convertedManaCost() ) return false; // why bother? ^^
 
+	// symbols are sorted from generic to colored, so iteration is done in reverse order to match colors first
+
+	// do a backtrack doing permutations and snow
+	/*
+	 * start backtracking. if a match is found, then break and return true
+	 */
+
+
 	// match colors
 	// match snow
 	// match generic

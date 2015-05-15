@@ -9,12 +9,12 @@ namespace {
 		setup()
 		{
 			using namespace mtg;
-			card.mainStat.cost = "1B";
+			card.mainStat.cost = parseCost("1B");
 			card.mainStat.name = "diego";
 
 			card2 = Card(splitCard,card.mainStat,CardStat());
 			card2.secondaryStat->name = "jose";
-			card2.secondaryStat->cost = "RG";
+			card2.secondaryStat->cost = parseCost("RG");
 		}
     };
 }

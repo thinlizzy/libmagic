@@ -1,4 +1,5 @@
 #include "BoardStreamOps.h"
+#include "CardStreamOps.h"
 
 namespace mtg {
 

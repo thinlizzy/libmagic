@@ -2,9 +2,9 @@
 #define PROTOTYPES_H_kj45932gmj4309g
 
 #include <string>
-#include "Card.h"
-#include "types/LandType.h"
-#include "../util/singleton.h"
+#include "../cards/Card.h"
+#include "../cards/types/LandType.h"
+#include "singleton.h"
 
 namespace mtg {
 

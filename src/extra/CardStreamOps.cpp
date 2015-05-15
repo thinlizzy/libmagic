@@ -1,9 +1,9 @@
 #include "CardStreamOps.h"
-#include "Card.h"
-#include "Land.h"
-#include "Creature.h"
-#include "Planeswalker.h"
-#include "types/TypeToStr.h"
+#include "../cards/Card.h"
+#include "../cards/Land.h"
+#include "../cards/Creature.h"
+#include "../cards/Planeswalker.h"
+#include "../cards/types/TypeToStr.h"
 #include <algorithm>
 #include <iterator>
 
@@ -78,18 +78,21 @@ std::ostream & operator<<(std::ostream & os, mtg::ColorSet const & colorSet)
 
 std::ostream & operator<<(std::ostream & os, mtg::ManaPattern const & mp) {
     bool printed = false;
-	char const specific[] = "XYZPS";
+	auto printSpecific = [&](bool print, char c) {
+		if( ! print ) return;
+		if( printed ) os << '/';
+		os << c;
+		printed = true;
+	};
 	if( mp.generic > 0 ) {
-		os << mp.generic;
+		os << unsigned(mp.generic);
 		printed = true;
 	}
-	for( unsigned s = 0; s != 5; ++s ) {
-		if( mp.specific[s] ) {
-			if( printed ) os << '/';
-			os << specific[s];
-			printed = true;
-		}
-	}
+	printSpecific(mp.specific.X,'X');
+	printSpecific(mp.specific.Y,'Y');
+	printSpecific(mp.specific.Z,'Z');
+	printSpecific(mp.specific.phyrexian,'P');
+	printSpecific(mp.specific.snow,'S');
 	for( unsigned c = mtg::nColors; c-->0;  ) {
 		if( mp.colors[c] ) {
 			if( printed ) os << '/';
@@ -104,7 +107,7 @@ std::ostream & operator<<(std::ostream & os, mtg::ManaPattern const & mp) {
 }
 
 std::ostream & operator<<(std::ostream & os, mtg::Cost const & cost) {
-    std::copy(cost.getSymbols().begin(),cost.getSymbols().end(),std::ostream_iterator<mtg::ManaPattern>(os));
+    std::copy(cost.symbols.begin(),cost.symbols.end(),std::ostream_iterator<mtg::ManaPattern>(os));
     return os;
 }
 

@@ -4,6 +4,7 @@
 #include <string>
 #include <experimental/optional>
 #include "Cost.h"
+#include "Color.h"
 #include "Land.h"
 #include "Creature.h"
 #include "Planeswalker.h"
@@ -11,7 +12,6 @@
 #include "types/CreatureType.h"
 #include "types/EnchantmentType.h"
 #include "types/SpellType.h"
-#include "types/Color.h"
 #include "types/Expansion.h"
 #include "types/Rarity.h"
 

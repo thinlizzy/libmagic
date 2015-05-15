@@ -6,7 +6,7 @@
 #include <list>
 #include <initializer_list>
 #include <iterator>
-#include "../cards/types/Color.h"
+#include "../cards/Color.h"
 #include "../cards/Cost.h"
 
 namespace mtg {

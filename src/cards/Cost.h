@@ -5,13 +5,25 @@
 #include <string>
 #include <bitset>
 #include <ostream>
-#include "types/Color.h"
+#include "Color.h"
 
 namespace mtg {
 
 struct ManaPattern {
 	ColorSet colors;   // green, blue, red, white, black
-	std::bitset<5> specific; // x, y, z, p, s
+	struct Specific {
+		bool X : 1;
+		bool Y : 1;
+		bool Z : 1;
+		bool phyrexian : 1;
+		bool snow : 1;
+
+		bool operator==(Specific const & specific) const {
+			// boring :(
+			return X == specific.X && Y == specific.Y && Z == specific.Z && phyrexian == specific.phyrexian && snow == specific.snow;
+		}
+	};
+	Specific specific = {};
 	using Generic = unsigned char;
 	Generic generic;
 
@@ -25,31 +37,24 @@ struct ManaPattern {
 	bool hasColor(Color c) const;
 	bool colorless() const;
     bool monoColored() const;
-	bool empty() const;
 
 	bool operator==(ManaPattern const & mp) const;
 };
 
 class Cost {
-private:
-	std::vector<ManaPattern> symbols;
 public:
+	using Symbols = std::vector<ManaPattern>;
+	Symbols symbols;
+
 	Cost() = default;
-	Cost(char const * cost);
-	Cost(std::string const & cost);
 
 	unsigned convertedManaCost() const;
 	bool hasColor(Color c) const;
 	bool colorless() const;
 	ColorSet colors() const;
 
-	std::vector<ManaPattern> const & getSymbols() const { return symbols; }
-
 	bool operator==(Cost const & cost) const;
 	bool operator!=(Cost const & cost) const;
-private:
-	void parse(std::string const & cost);
-	void sortSymbols();
 };
 
 }

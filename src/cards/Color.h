@@ -17,9 +17,9 @@ enum Color {
     colorless,
 };
 
-using ColorSet = std::bitset<5>;
+using ColorSet = std::bitset<nColors>;
 
-constexpr char const * colorText = "GURWB";
+constexpr char colorText[] = "GURWB";
 
 /*
 class ColorSet {

@@ -5,7 +5,7 @@
 #include "OwnedCards.h"
 #include "Counter.h"
 #include "ManaPool.h"
-#include "../cards/types/Color.h"
+#include "../cards/Color.h"
 #include <unordered_map>
 #include <string>
 

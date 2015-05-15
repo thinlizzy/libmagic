@@ -2,14 +2,14 @@
 #define CARDS_STREAM_OPERATORS_H_jf432932432lv03bnxzcty2135
 
 #include <ostream>
-#include "types/ArtifactType.h"
-#include "types/CreatureType.h"
-#include "types/EnchantmentType.h"
-#include "types/SpellType.h"
-#include "types/SuperType.h"
-#include "types/CardType.h"
-#include "types/PlaneswalkerType.h"
-#include "types/Color.h"
+#include "../cards/types/ArtifactType.h"
+#include "../cards/types/CreatureType.h"
+#include "../cards/types/EnchantmentType.h"
+#include "../cards/types/SpellType.h"
+#include "../cards/types/SuperType.h"
+#include "../cards/types/CardType.h"
+#include "../cards/types/PlaneswalkerType.h"
+#include "../cards/Color.h"
 
 namespace mtg {
     
