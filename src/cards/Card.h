@@ -21,8 +21,8 @@ class CardStat {
 public:
 	std::string name;
 	Cost cost;
-	// TODO replace with bit enum
-	std::experimental::optional<ManaPattern> colors;					// can be zero or more colors
+
+	std::experimental::optional<ColorSet> colors_;
 	std::string text;
 
 	unsigned supertypes;		// SuperType bit set
@@ -37,8 +37,8 @@ public:
 
 	CardStat();
 	bool hasColor(Color color) const;
-	ManaPattern getColors() const;
-	std::string getTypes() const;
+	ColorSet colors() const;
+	std::string types() const;
 	bool operator==(CardStat const & card) const;
 	bool operator!=(CardStat const & card) const;
 	bool operator<(CardStat const & card) const;
@@ -51,6 +51,7 @@ typedef unsigned CardId;
 
 class Card {
 public:
+	// TODO review the need of this id. Need to find something to differentiate card reprints. Perhaps a collector number, instead
 	CardId id;
 	Expansion expansion;
 	Rarity rarity;
@@ -64,7 +65,7 @@ public:
 	Card(CardKind kind, CardStat const & mainStat, CardStat const & secondaryStat);
     bool isLand() const;
 	bool hasColor(Color color) const;
-	ManaPattern getColors() const;
+	ColorSet colors() const;
 	bool hasName(std::string const & name) const;
 	std::string displayName() const;
 	bool operator==(Card const & card) const;

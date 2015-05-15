@@ -26,7 +26,7 @@ namespace tut {
 		ensure(land.land->types.find(mtg::swamp) != land.land->types.end());
 		ensure_equals(1,land.land->types.size());
 		ensure(! land.hasColor(mtg::green));
-		ensure(! land.colors);
+		ensure(! land.colors_);
     }
 
 }

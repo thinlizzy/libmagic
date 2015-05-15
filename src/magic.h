@@ -7,7 +7,6 @@
 #include "board/BoardStreamOps.h"
 
 #include "cards/Card.h"
-#include "cards/Colors.h"
 #include "cards/Cost.h"
 
 #include "cards/Creature.h"

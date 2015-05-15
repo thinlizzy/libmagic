@@ -1,5 +1,4 @@
 #include "Cost.h"
-#include "Colors.h"
 #include "../util/automata.h"
 
 #include <numeric>
@@ -83,11 +82,11 @@ public:
 		};
 
 		for( int ci = 0; ci < nColors; ++ci ) {
-			parser.setTrans("start",colors->colorText[ci],"color").output = bind(&Parser::newChar,this,_1);
-			parser.setTrans("digit",colors->colorText[ci],"color").output =
-			parser.setTrans("color",colors->colorText[ci],"color").output =
-			parser.setTrans("XYZ",colors->colorText[ci],"color").output = bind(&Parser::emitAndNewChar,this,_1);
-			parser.setTrans("slash",colors->colorText[ci],"color").output = [&](char c) {
+			parser.setTrans("start",colorText[ci],"color").output = bind(&Parser::newChar,this,_1);
+			parser.setTrans("digit",colorText[ci],"color").output =
+			parser.setTrans("color",colorText[ci],"color").output =
+			parser.setTrans("XYZ",colorText[ci],"color").output = bind(&Parser::emitAndNewChar,this,_1);
+			parser.setTrans("slash",colorText[ci],"color").output = [&](char c) {
 				acc.setChar(c);
 			};
 		}
@@ -135,20 +134,28 @@ public:
 	}
 };
 
-thread_local Parser parser;
+//
 
-Cost::Cost()
-{
-}
+thread_local Parser parser;
 
 Cost::Cost(char const * cost):
 	symbols(parser.parse(std::string(cost)))
 {
+	sortSymbols();
 }
 
 Cost::Cost(std::string const & cost):
 	symbols(parser.parse(cost))
 {
+	sortSymbols();
+}
+
+// put all colorless mana to the end
+void Cost::sortSymbols()
+{
+	std::sort(symbols.begin(),symbols.end(),[](auto s1, auto s2) {
+		return s1.colorless() > s2.colorless();
+	});
 }
 
 bool Cost::operator==(Cost const & cost) const
@@ -158,19 +165,46 @@ bool Cost::operator==(Cost const & cost) const
 
 bool Cost::operator!=(Cost const & cost) const { return ! (*this == cost); }
 
+unsigned Cost::convertedManaCost() const
+{
+	return std::accumulate(symbols.begin(),symbols.end(),0,[](unsigned t, ManaPattern symbol) {
+		return t+symbol.cmc();
+	});
+}
 
-ManaPattern::Specific allColors(0x1F);
+bool Cost::hasColor(Color c) const
+{
+	return std::find_if(symbols.begin(),symbols.end(),[c](auto symbol){
+		return symbol.hasColor(c);
+	}) != symbols.end();
+}
+
+bool Cost::colorless() const
+{
+	return std::find_if_not(symbols.begin(),symbols.end(),[](auto symbol){
+		return symbol.colorless();
+	}) == symbols.end();
+}
+
+ColorSet Cost::colors() const
+{
+	return std::accumulate(symbols.begin(),symbols.end(),ColorSet{},[](ColorSet t, auto symbol) {
+		return t |= symbol.colors;
+	});
+}
+
+//
 
 ManaPattern::ManaPattern():
 	generic(0)
 {}
 
-ManaPattern::ManaPattern(unsigned char generic):
+ManaPattern::ManaPattern(Generic generic):
 	generic(generic)
 {
 }
 
-ManaPattern::ManaPattern(unsigned char generic, Color c):
+ManaPattern::ManaPattern(Generic generic, Color c):
 	generic(generic)
 {
 	colors.set(c);
@@ -186,38 +220,31 @@ ManaPattern::ManaPattern(Color c, Color c2):
 unsigned ManaPattern::cmc() const
 {
 	if( generic > 0 ) return generic;
-	if( (colors & allColors).any() ) return 1;
+	if( colors.any() ) return 1;
 	return 0;
 }
 
 ManaPattern & ManaPattern::setChar(char c)
 {
-	int bit;
 	switch(c) {
-        case 'G': bit = green; break;
-        case 'U': bit = blue; break;
-        case 'R': bit = red; break;
-        case 'W': bit = white; break;
-        case 'B': bit = black; break;
-        case 'X': bit = black+1; break;
-        case 'Y': bit = black+2; break;
-        case 'Z': bit = black+3; break;
-        case 'P': bit = black+4; break;
-        case 'S': bit = black+5; break;
+        case 'G': colors.set(green); break;
+        case 'U': colors.set(blue); break;
+        case 'R': colors.set(red); break;
+        case 'W': colors.set(white); break;
+        case 'B': colors.set(black); break;
+        case 'X': specific.set(0); break;
+        case 'Y': specific.set(1); break;
+        case 'Z': specific.set(2); break;
+        case 'P': specific.set(3); break;
+        case 'S': specific.set(4); break;
         default: throw std::invalid_argument(c + std::string(" is a invalid char to set mana pattern"));
 	}
-	colors.set(bit);
 	return *this;
 }
 
 bool ManaPattern::hasColor(Color c) const
 {
 	return colors[c];
-}
-
-bool ManaPattern::empty() const
-{
-	return colorless() && generic == 0;
 }
 
 bool ManaPattern::colorless() const
@@ -230,82 +257,14 @@ bool ManaPattern::monoColored() const
     return colors.count() == 1;
 }
 
+bool ManaPattern::empty() const
+{
+	return ! colors.any() && ! specific.any() && generic == 0;
+}
+
 bool ManaPattern::operator==(ManaPattern const & mp) const
 {
-	return colors == mp.colors && generic == mp.generic;
+	return colors == mp.colors && specific == mp.specific && generic == mp.generic;
 }
-
-
-
-
-unsigned Cost::convertedManaCost() const
-{
-	return std::accumulate(symbols.begin(),symbols.end(),0,[](unsigned t, ManaPattern symbol) { return t+symbol.cmc(); });
-}
-
-ManaPattern Cost::getColors() const
-{
-	ManaPattern result;
-	result.colors = std::accumulate(symbols.begin(),symbols.end(),ManaPattern::Specific(),[](ManaPattern::Specific t, ManaPattern symbol) {
-		return t | symbol.colors;
-	});
-	return result;
-}
-
-
-
-inline int showcolors_i() { 
-    static int i = std::ios_base::xalloc();
-    return i;
-}
-
-std::ostream & showcolors(std::ostream & os) {
-    os.iword(showcolors_i()) = 1;
-    return os;
-}
-
-std::ostream & operator<<(std::ostream & os, mtg::ManaPattern const & mp) {
-    bool printed = false;
-    if( os.iword(showcolors_i()) ) {
-        for( Color c = Color(0); c != mtg::nColors; c = Color(c+1) ) {
-            if( mp.colors[c] ) {
-                if( printed ) os << '/';
-                os << mtg::colors->colorDesc.getLeft()[c];
-                printed = true;
-            }
-        }
-        os.iword(showcolors_i()) = 0;
-    } else {
-        char const other[] = "XYZ";
-        if( mp.generic > 0 ) {
-            os << mp.generic;
-            printed = true;
-        }
-        for( unsigned c = mtg::nColors+3; c-->mtg::nColors;  ) {
-            if( mp.colors[c] ) {
-                if( printed ) os << '/';
-                os << other[c-mtg::nColors];
-                printed = true;
-            }
-        }
-        for( unsigned c = mtg::nColors; c-->0;  ) {
-            if( mp.colors[c] ) {
-                if( printed ) os << '/';
-                os << mtg::colors->colorText[c];
-                printed = true;
-            }
-        }
-        if( ! printed ) {
-            os << '0';
-        }
-    }
-    return os;
-}
-
-std::ostream & operator<<(std::ostream & os, mtg::Cost const & cost) {
-    std::copy(cost.getSymbols().begin(),cost.getSymbols().end(),std::ostream_iterator<mtg::ManaPattern>(os));
-    return os;
-}
-
 
 }

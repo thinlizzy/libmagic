@@ -68,7 +68,7 @@ void ManaPool::remove(ManaCRef manaRef)
 	}
 
 	if( manaRef->annotations != 0 ) {
-		for( unsigned a = 1; a <= Mana::burnsOnlyAtEot; a<<=1 ) {
+		for( unsigned a = 1; a <= Mana::lastAnnotation; a<<=1 ) {
 			auto annotation = static_cast<Mana::Annotation>(manaRef->annotations & a);
 			if( annotation != 0 ) {
 				removeFrom(byAnnotation,annotation,manaRef);
@@ -81,6 +81,13 @@ void ManaPool::remove(ManaCRef manaRef)
 
 bool ManaPool::canCast(Cost const & cost, Mana::Annotations annotations) const
 {
+	if( pool.size() < cost.convertedManaCost() ) return false; // why bother? ^^
+
+	// match colors
+	// match snow
+	// match generic
+	// for each tested group, it needs to match mana.allowsRestrictions(annotations)
+
 	 // TODO: implement
 	return false;
 }

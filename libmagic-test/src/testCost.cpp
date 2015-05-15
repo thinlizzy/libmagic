@@ -39,7 +39,7 @@ namespace tut {
         set_test_name("beseech the queen");
 		mtg::Cost cost = "2/B2/B2/B";
 		ensure_equals( cost.convertedManaCost() , 6 );
-		ensure( cost.getColors().hasColor(mtg::black) );
+		ensure( cost.hasColor(mtg::black) );
     }   
 
     template<> 
@@ -49,11 +49,11 @@ namespace tut {
         set_test_name("mixed");
 		mtg::Cost cost = "1WR/B";
 		ensure_equals( cost.convertedManaCost() , 3 );
-		ensure( ! cost.getColors().hasColor(mtg::green) );
-		ensure( ! cost.getColors().hasColor(mtg::blue) );
-		ensure( cost.getColors().hasColor(mtg::black) );
-		ensure( cost.getColors().hasColor(mtg::red) );
-		ensure( cost.getColors().hasColor(mtg::white) );
+		ensure( ! cost.hasColor(mtg::green) );
+		ensure( ! cost.hasColor(mtg::blue) );
+		ensure( cost.hasColor(mtg::black) );
+		ensure( cost.hasColor(mtg::red) );
+		ensure( cost.hasColor(mtg::white) );
     }   
 
     template<> 
@@ -63,8 +63,8 @@ namespace tut {
         set_test_name("fireball");
 		mtg::Cost cost = "XR";
 		ensure_equals( cost.convertedManaCost() , 1 );
-		ensure( cost.getColors().hasColor(mtg::red) );
-		ensure( ! cost.getColors().hasColor(mtg::green) );
+		ensure( cost.hasColor(mtg::red) );
+		ensure( ! cost.hasColor(mtg::green) );
     }   
 
     template<> 
@@ -74,7 +74,7 @@ namespace tut {
         set_test_name("mind warp");
 		mtg::Cost cost = "X3B";
 		ensure_equals( cost.convertedManaCost() , 4 );
-		ensure( cost.getColors().hasColor(mtg::black) );
+		ensure( cost.hasColor(mtg::black) );
     }   
 
     template<> 
@@ -84,8 +84,8 @@ namespace tut {
         set_test_name("unknown card");
 		mtg::Cost cost = "15 2/R/G";
 		ensure_equals( cost.convertedManaCost() , 17 );
-		ensure( cost.getColors().hasColor(mtg::red) );
-		ensure( cost.getColors().hasColor(mtg::green) );
+		ensure( cost.hasColor(mtg::red) );
+		ensure( cost.hasColor(mtg::green) );
     }   
 
     template<>
@@ -95,7 +95,7 @@ namespace tut {
         set_test_name("snow");
 		mtg::Cost cost = "S1";
 		ensure_equals( cost.convertedManaCost() , 2 );
-		ensure( cost.getColors().monoColored() );
+		ensure( cost.colorless() );
     }
 
     template<>
@@ -105,7 +105,7 @@ namespace tut {
         set_test_name("snow with colors");
 		mtg::Cost cost = "G2S1";
 		ensure_equals( cost.convertedManaCost() , 5 );
-		ensure( cost.getColors().hasColor(mtg::green) );
+		ensure( cost.hasColor(mtg::green) );
     }
 
 }

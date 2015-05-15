@@ -15,8 +15,13 @@ namespace {
 			tut::ensure_equals( t , tot );
 		}
 
-		int countSnow() {
-			auto bs = pool.getBySource(mtg::Mana::snow);
+		int count(mtg::Color color) {
+			auto bc = pool.getByColor(color);
+			return std::distance(bc.begin(),bc.end());
+		}
+
+		int count(mtg::Mana::Source source) {
+			auto bs = pool.getBySource(source);
 			return std::distance(bs.begin(),bs.end());
 		}
 
@@ -139,7 +144,7 @@ namespace tut {
         pool.add(mtg::blue);
 
 		ensure_equals( pool.mana().size() , 9 );
-		ensure_equals( countSnow() , 4 );
+		ensure_equals( count(mtg::Mana::snow) , 4 );
 		ensure_equals( count(mtg::Mana::abilities) , 2 );
 		ensure_equals( count(mtg::Mana::artifact) , 1 );
 		ensure_equals( count(mtg::Mana::upkeep) , 2 );
@@ -149,7 +154,7 @@ namespace tut {
 		ensure( ! bc.empty() );
 		pool.remove(*bc.begin());
 		ensure_equals( pool.mana().size() , 8 );
-		ensure_equals( countSnow() , 3 );
+		ensure_equals( count(mtg::Mana::snow) , 3 );
 		bc = pool.getByColor(mtg::white);
 		ensure( bc.empty() );
 		ensure_equals( count(mtg::Mana::abilities) , 1 );
@@ -159,6 +164,10 @@ namespace tut {
 		ensure( ! ba.empty() );
 		auto blackManaAbilities = *ba.begin();
 		ensure_equals( blackManaAbilities->color , mtg::black );
+
+		pool.remove(blackManaAbilities);
+		ensure_equals( count(mtg::Mana::abilities) , 0 );
+		ensure_equals( count(mtg::black) , 1 );
     }
 
     // TODO test canCast

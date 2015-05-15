@@ -1,7 +1,6 @@
 #include "prototypes.h"
 
 #include "Land.h"
-#include "Colors.h"
 #include "types/CardType.h"
 
 namespace mtg {
@@ -65,7 +64,7 @@ CardStat Prototypes::createBasicLand(std::string const & name, LandType type, Co
 	CardStat result(this->land);
 	result.name = name;
 	result.land->types.insert(type);
-	result.text = std::string("%T add %") + colors->colorText[color] + " to your mana pool";		// TODO change to format()
+	result.text = std::string("%T add %") + colorText[color] + " to your mana pool";		// TODO change to format()
 	return result;
 }
 

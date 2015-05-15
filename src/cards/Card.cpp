@@ -22,14 +22,13 @@ CardStat::CardStat():
 
 bool CardStat::hasColor(Color color) const
 {
-	return getColors().hasColor(color);
+	return colors()[color];
 }
 
-ManaPattern CardStat::getColors() const
+ColorSet CardStat::colors() const
 {
-	if( colors ) return *colors;
-
-	return cost.getColors();
+	if( colors_ ) return *colors_;
+	return cost.colors();
 }
 
 bool CardStat::operator==(CardStat const & card) const
@@ -37,7 +36,7 @@ bool CardStat::operator==(CardStat const & card) const
 	return name == card.name
 		&& artifactType == card.artifactType
 		&& cardTypes == card.cardTypes
-		&& colors == card.colors
+		&& colors_ == card.colors_
 		&& cost == card.cost
 		&& creature == card.creature
 		&& enchantmentType == card.enchantmentType
@@ -70,7 +69,7 @@ std::string fetchTypes(C const & container, F func)
 	return os.str();
 }
 
-std::string CardStat::getTypes() const
+std::string CardStat::types() const
 {
 	std::string result =
 		(supertypes ? typeToStr(SuperType(supertypes)) + " " : "") +
@@ -123,15 +122,15 @@ bool Card::isLand() const
 
 bool Card::hasColor(Color color) const
 {
-	return getColors().hasColor(color);
+	return colors()[color];
 }
 
-ManaPattern Card::getColors() const
+ColorSet Card::colors() const
 {
-	ManaPattern result = mainStat.getColors();
+	auto result = mainStat.colors();
 	if( kind == splitCard ) {
 		if( ! secondaryStat ) throw std::logic_error("split cards should have a secondary stat");
-		result.colors |= secondaryStat->getColors().colors;
+		result |= secondaryStat->colors();
 	}
 	return result;
 }

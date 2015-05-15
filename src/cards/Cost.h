@@ -10,13 +10,14 @@
 namespace mtg {
 
 struct ManaPattern {
-	typedef std::bitset<10> Specific;	// green, blue, red, white, black, x, y, z, p, s
-	Specific colors;
-	unsigned char generic;
+	ColorSet colors;   // green, blue, red, white, black
+	std::bitset<5> specific; // x, y, z, p, s
+	using Generic = unsigned char;
+	Generic generic;
 
 	ManaPattern();
-	ManaPattern(unsigned char generic);
-	ManaPattern(unsigned char generic, Color c);
+	ManaPattern(Generic generic);
+	ManaPattern(Generic generic, Color c);
 	ManaPattern(Color c, Color c2);
 
 	ManaPattern & setChar(char c);
@@ -33,11 +34,14 @@ class Cost {
 private:
 	std::vector<ManaPattern> symbols;
 public:
-	Cost();
-	Cost(std::string const & cost);
+	Cost() = default;
 	Cost(char const * cost);
+	Cost(std::string const & cost);
+
 	unsigned convertedManaCost() const;
-	ManaPattern getColors() const;
+	bool hasColor(Color c) const;
+	bool colorless() const;
+	ColorSet colors() const;
 
 	std::vector<ManaPattern> const & getSymbols() const { return symbols; }
 
@@ -45,11 +49,8 @@ public:
 	bool operator!=(Cost const & cost) const;
 private:
 	void parse(std::string const & cost);
+	void sortSymbols();
 };
-
-std::ostream & operator<<(std::ostream & os, mtg::ManaPattern const & mp);
-std::ostream & operator<<(std::ostream & os, mtg::Cost const & cost);
-std::ostream & showcolors(std::ostream & os);
 
 }
 

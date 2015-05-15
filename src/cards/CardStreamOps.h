@@ -9,6 +9,7 @@
 #include "types/SuperType.h"
 #include "types/CardType.h"
 #include "types/PlaneswalkerType.h"
+#include "types/Color.h"
 
 namespace mtg {
     
@@ -17,6 +18,8 @@ class Creature;
 class Planeswalker;
 class CardStat;
 class Card;
+class Cost;
+class ManaPattern;
 
 std::ostream & operator<<(std::ostream & os, Land const & land);
 std::ostream & operator<<(std::ostream & os, Creature const & creature);
@@ -30,6 +33,9 @@ std::ostream & operator<<(std::ostream & os, PlaneswalkerType const & type);
 std::ostream & operator<<(std::ostream & os, SpellType const & type);
 std::ostream & operator<<(std::ostream & os, CardStat const & stat);
 std::ostream & operator<<(std::ostream & os, Card const & card);
+std::ostream & operator<<(std::ostream & os, mtg::ManaPattern const & mp);
+std::ostream & operator<<(std::ostream & os, mtg::Cost const & cost);
+std::ostream & operator<<(std::ostream & os, mtg::ColorSet const & colorSet);
 
 }
 

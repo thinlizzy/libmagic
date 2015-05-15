@@ -63,10 +63,55 @@ std::ostream & operator<<(std::ostream & os, SpellType const & type) {
     return os;
 }
 
+std::ostream & operator<<(std::ostream & os, mtg::ColorSet const & colorSet)
+{
+    bool printed = false;
+	for( unsigned c = mtg::nColors; c-->0;  ) {
+		if( colorSet[c] ) {
+			if( printed ) os << '/';
+			os << mtg::colorText[c];
+			printed = true;
+		}
+	}
+	return os;
+}
+
+std::ostream & operator<<(std::ostream & os, mtg::ManaPattern const & mp) {
+    bool printed = false;
+	char const specific[] = "XYZPS";
+	if( mp.generic > 0 ) {
+		os << mp.generic;
+		printed = true;
+	}
+	for( unsigned s = 0; s != 5; ++s ) {
+		if( mp.specific[s] ) {
+			if( printed ) os << '/';
+			os << specific[s];
+			printed = true;
+		}
+	}
+	for( unsigned c = mtg::nColors; c-->0;  ) {
+		if( mp.colors[c] ) {
+			if( printed ) os << '/';
+			os << mtg::colorText[c];
+			printed = true;
+		}
+	}
+	if( ! printed ) {
+		os << '0';
+	}
+    return os;
+}
+
+std::ostream & operator<<(std::ostream & os, mtg::Cost const & cost) {
+    std::copy(cost.getSymbols().begin(),cost.getSymbols().end(),std::ostream_iterator<mtg::ManaPattern>(os));
+    return os;
+}
+
 std::ostream & operator<<(std::ostream & os, CardStat const & stat) {
     os << stat.name << '|';
-    if( stat.colors ) {
-        os << showcolors << *stat.colors << '|';
+    if( stat.colors_ ) {
+        os << *stat.colors_ << '|';
     }
     os << stat.cost << '|';
     os << typeToStr(SuperType(stat.supertypes)) << '|';
@@ -99,6 +144,28 @@ std::ostream & operator<<(std::ostream & os, Card const & card) {
     }
     return os;
 }
-    
+
 }
 
+/*
+inline int showcolors_i() {
+    static int i = std::ios_base::xalloc();
+    return i;
+}
+
+std::ostream & showcolors(std::ostream & os) {
+    os.iword(showcolors_i()) = 1;
+    return os;
+}
+
+    if( os.iword(showcolors_i()) ) {
+        for( Color c = Color(0); c != mtg::nColors; c = Color(c+1) ) {
+            if( mp.colors[c] ) {
+                if( printed ) os << '/';
+                os << mtg::colors->colorDesc.getLeft()[c];
+                printed = true;
+            }
+        }
+        os.iword(showcolors_i()) = 0;
+    } else {
+ */
