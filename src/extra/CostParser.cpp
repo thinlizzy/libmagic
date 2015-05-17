@@ -9,13 +9,30 @@ using namespace automata;
 class Parser {
 	bool sameSymbol;
 	bool pending;
-	ManaPattern acc;
+	ManaSymbol acc;
 	Cost::Symbols symbols;
 	FiniteAutomata<Range<char>,MealyTransition<Range<char>>> parser;
 
+	void setChar(char c)
+	{
+		switch(c) {
+	        case 'G': acc.colors.set(green); break;
+	        case 'U': acc.colors.set(blue); break;
+	        case 'R': acc.colors.set(red); break;
+	        case 'W': acc.colors.set(white); break;
+	        case 'B': acc.colors.set(black); break;
+	        case 'X': acc.specific = ManaSymbol::X; break;
+	        case 'Y': acc.specific = ManaSymbol::Y; break;
+	        case 'Z': acc.specific = ManaSymbol::Z; break;
+	        case 'P': acc.specific = ManaSymbol::phyrexian; break;
+	        case 'S': acc.specific = ManaSymbol::snow; break;
+	        default: throw std::invalid_argument(c + std::string(" is a invalid char to set mana pattern"));
+		}
+	}
+
 	void clear() {
 		if( sameSymbol ) return;
-		acc = ManaPattern();
+		acc = ManaSymbol();
 		pending = false;
 	}
 	void emit() {
@@ -30,7 +47,7 @@ class Parser {
 	}
 	void newChar(char c) {
 		clear();
-		acc.setChar(c);
+		setChar(c);
 		pending = true;
 	}
 	void emitAndNewChar(char c) {
@@ -77,7 +94,7 @@ public:
 
 		parser.setTrans("color",'P',"P").output =
 		parser.setTrans("slash",'P',"P").output = [&](char d) {
-			acc.setChar('P');
+			setChar('P');
 		};
 
 		for( int ci = 0; ci < nColors; ++ci ) {
@@ -86,7 +103,7 @@ public:
 			parser.setTrans("color",colorText[ci],"color").output =
 			parser.setTrans("XYZ",colorText[ci],"color").output = bind(&Parser::emitAndNewChar,this,_1);
 			parser.setTrans("slash",colorText[ci],"color").output = [&](char c) {
-				acc.setChar(c);
+				setChar(c);
 			};
 		}
 
@@ -120,7 +137,7 @@ public:
 		parser.getNode("P").final = true;
 	}
 
-	std::vector<ManaPattern> & parse(std::string const & cost)
+	std::vector<ManaSymbol> & parse(std::string const & cost)
 	{
 		sameSymbol = false;
 		clear();

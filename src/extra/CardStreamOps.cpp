@@ -76,23 +76,18 @@ std::ostream & operator<<(std::ostream & os, mtg::ColorSet const & colorSet)
 	return os;
 }
 
-std::ostream & operator<<(std::ostream & os, mtg::ManaPattern const & mp) {
+std::ostream & operator<<(std::ostream & os, mtg::ManaSymbol const & mp) {
     bool printed = false;
-	auto printSpecific = [&](bool print, char c) {
-		if( ! print ) return;
+	if( mp.specific != 0 ) {
 		if( printed ) os << '/';
-		os << c;
+		char const specChar[] = " XYZPS";
+		os << specChar[mp.specific];
 		printed = true;
-	};
-	if( mp.generic > 0 ) {
+	}
+	if( mp.generic > 0 && mp.specific != mtg::ManaSymbol::snow ) {
 		os << unsigned(mp.generic);
 		printed = true;
 	}
-	printSpecific(mp.specific.X,'X');
-	printSpecific(mp.specific.Y,'Y');
-	printSpecific(mp.specific.Z,'Z');
-	printSpecific(mp.specific.phyrexian,'P');
-	printSpecific(mp.specific.snow,'S');
 	for( unsigned c = mtg::nColors; c-->0;  ) {
 		if( mp.colors[c] ) {
 			if( printed ) os << '/';
@@ -107,7 +102,7 @@ std::ostream & operator<<(std::ostream & os, mtg::ManaPattern const & mp) {
 }
 
 std::ostream & operator<<(std::ostream & os, mtg::Cost const & cost) {
-    std::copy(cost.symbols.begin(),cost.symbols.end(),std::ostream_iterator<mtg::ManaPattern>(os));
+    std::copy(cost.symbols.begin(),cost.symbols.end(),std::ostream_iterator<mtg::ManaSymbol>(os));
     return os;
 }
 

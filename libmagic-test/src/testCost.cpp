@@ -14,8 +14,8 @@ namespace tut {
     
     typedef tg::object testobject;
     
-    template<> 
-    template<> 
+    template<>
+    template<>
     void testobject::test<1>() 
     {
         set_test_name("noncolored only");
@@ -108,26 +108,59 @@ namespace tut {
 		ensure( cost.hasColor(mtg::green) );
     }
 
+	// colorless mana to start, snow in the middle, then colored at the end
+    int sv(mtg::ManaSymbol s) {
+    	if( s.colored() ) return 1;
+    	if( s.specific == mtg::ManaSymbol::snow ) return 0;
+    	return -1;
+    }
+
     template<>
     template<>
     void testobject::test<10>()
     {
         set_test_name("verify sorting");
-		mtg::Cost cost = mtg::parseCost("YXG2S1R/P");
-		// put all colorless mana to the start
+		mtg::Cost cost = mtg::parseCost("YXG2S1R/P");  // nothing like this should appear in the game
+		std::cout << "unsorted " << cost << std::endl;
+		// sort mana based on importance
 		std::stable_sort(cost.symbols.begin(),cost.symbols.end(),[](auto s1, auto s2) {
-			return s1.colorless() > s2.colorless();
+			return sv(s1) < sv(s2);
 		});
+		std::cout << "sorted " << cost << std::endl;
 
 		ensure_equals( cost.convertedManaCost() , 6 );
-		ensure( cost.symbols[0].specific.Y );
-		ensure( cost.symbols[1].specific.X );
+		ensure_equals( cost.symbols[0].specific , mtg::ManaSymbol::Y );
+		ensure_equals( cost.symbols[1].specific , mtg::ManaSymbol::X );
 		ensure_equals( cost.symbols[2].generic , 2 );
-		ensure( cost.symbols[3].specific.snow );
+		// colorless mana should be grouped in a single symbol. this is for testing purposes only
 		ensure_equals( cost.symbols[3].generic , 1 );
+		ensure_equals( cost.symbols[4].specific , mtg::ManaSymbol::snow );
 		ensure_equals( cost.symbols[4].generic , 1 );
 		ensure( cost.symbols[5].hasColor(mtg::green) );
 		ensure( cost.symbols[6].hasColor(mtg::red) );
-		ensure( cost.symbols[6].specific.phyrexian );
+		ensure_equals( cost.symbols[6].specific , mtg::ManaSymbol::phyrexian );
+    }
+
+    template<>
+    template<>
+    void testobject::test<11>()
+    {
+        set_test_name("empty");
+		mtg::Cost cost;
+		ensure_equals( cost.convertedManaCost() , 0 );
+		ensure( cost.colorless() );
+		cost = mtg::parseCost("0");
+		ensure_equals( cost.convertedManaCost() , 0 );
+		ensure( cost.colorless() );
+    }
+
+    template<>
+    template<>
+    void testobject::test<12>()
+    {
+        set_test_name("cmcs");
+		mtg::Cost cost = mtg::parseCost("1SWR/B2/GU/P");
+		ensure_equals( cost.convertedManaCost() , 7 );
+		ensure_equals( cost.minimumManaCost() , 5 );
     }
 }

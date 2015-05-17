@@ -81,20 +81,22 @@ void ManaPool::remove(ManaCRef manaRef)
 
 bool ManaPool::canCast(Cost const & cost, Mana::Annotations annotations) const
 {
-	if( pool.size() < cost.convertedManaCost() ) return false; // why bother? ^^
+	if( cost.convertedManaCost() == 0 ) return true;
+	if( pool.size() < cost.minimumManaCost() ) return false; // why bother? ^^
 
-	// symbols are sorted from generic to colored, so iteration is done in reverse order to match colors first
+	// symbols are sorted from generic to snow to colored, so iteration is done in reverse order to match colors first
 
-	// do a backtrack doing permutations and snow
+	// do a backtrack doing permutations
 	/*
 	 * start backtracking. if a match is found, then break and return true
-	 */
+atente para variacoes nos iteradores e no phyrexian mana
+W/P matches 0 ou W
+2/W matches 2 or W
+W/R matches W or R
 
-
-	// match colors
-	// match snow
-	// match generic
 	// for each tested group, it needs to match mana.allowsRestrictions(annotations)
+
+	 */
 
 	 // TODO: implement
 	return false;
