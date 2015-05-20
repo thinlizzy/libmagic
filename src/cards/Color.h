@@ -14,7 +14,8 @@ enum Color {
 	white,
 	black,
 	nColors,
-    colorless,
+    colorless = 10,
+    firstColor = green,
 };
 
 using ColorSet = std::bitset<nColors>;

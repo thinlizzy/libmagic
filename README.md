@@ -1,7 +1,7 @@
 # libmagic
 A library that presents a data model for Magic The Gathering game.
 
-It covers most of the things needed to represent the state of a MTG card game and MTG decks. 
+It covers most of the things needed to represent the state of an MTG card game and also MTG decks. 
 
 # COMPILE
 Sorry! No makefile yet, so you need to set your favorite C++ compiler to C++14 and create a library with all files under src folder. 
@@ -15,7 +15,7 @@ TUT can be found here: http://mrzechonek.github.io/tut-framework/
 
 # TODO
 - add a makefile (compile and install)
-- Color needs redesign
 - Abilities (model, not rules)
 - more nuts and bolts for a basic rules engine (e.g: matchers for battlefield and other zones)
+- queries over decks, sets and the entire card pool
 - API for external control (to be used by embedded LUA, Python or JS scripts for card abilities)

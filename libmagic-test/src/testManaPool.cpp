@@ -170,6 +170,37 @@ namespace tut {
 		ensure_equals( count(mtg::black) , 1 );
     }
 
-    // TODO test canCast
+    template<>
+    template<>
+    void testobject::test<6>()
+    {
+        set_test_name("cancast empty");
+
+        mtg::Cost cost = mtg::parseCost("3RR");
+        auto matcher = pool.canCast(cost);
+        ensure_equals( matcher.getSolutions().size() , 0 );
+    }
+
+    template<>
+    template<>
+    void testobject::test<7>()
+    {
+        set_test_name("cancast single color");
+
+        pool.add(mtg::red);
+        pool.add(mtg::red);
+        pool.add(mtg::blue);
+        mtg::Cost cost = mtg::parseCost("1RR");
+        auto matcher = pool.canCast(cost);
+        ensure_equals( matcher.getSolutions().size() , 1 );
+        auto & solution = matcher.getSolutions()[0];
+        ensure_equals( solution.mana.size() , 3 );
+        ensure_equals( solution.life , 0 );
+        // TODO assert solution.mana elements
+    }
+
+    // TODO add more tests (snow, annotations, X, phyrexian)
+
+    // TODO test matcher itself for more than one solution
 }
 

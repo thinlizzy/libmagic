@@ -1,6 +1,7 @@
 #include "ManaPool.h"
 #include <iterator>
 #include <algorithm>
+#include "ManaMatcher.h"
 
 namespace mtg {
 
@@ -32,19 +33,19 @@ void ManaPool::add(Color color, Mana::Source source, std::initializer_list<Mana:
 	}
 }
 
-auto ManaPool::getByColor(Color color) const -> Range<ByColorCIt>
+auto ManaPool::getByColor(Color color) const -> ColorRange
 {
-	return Range<ByColorCIt>{byColor.equal_range(color)};
+	return ColorRange{byColor.equal_range(color)};
 }
 
-auto ManaPool::getBySource(Mana::Source source) const -> Range<BySourceCIt>
+auto ManaPool::getBySource(Mana::Source source) const -> SourceRange
 {
-	return Range<BySourceCIt>{bySource.equal_range(source)};
+	return SourceRange{bySource.equal_range(source)};
 }
 
-auto ManaPool::getByAnnotation(Mana::Annotation annotation) const -> Range<ByAnnotationCIt>
+auto ManaPool::getByAnnotation(Mana::Annotation annotation) const -> PairRange<ByAnnotationCIt,IteratorSecond<ByAnnotationCIt>>
 {
-	return Range<ByAnnotationCIt>{byAnnotation.equal_range(annotation)};
+	return PairRange<ByAnnotationCIt,IteratorSecond<ByAnnotationCIt>>{byAnnotation.equal_range(annotation)};
 }
 
 template<typename C, typename T>
@@ -79,27 +80,13 @@ void ManaPool::remove(ManaCRef manaRef)
 	pool.erase(manaRef);
 }
 
-bool ManaPool::canCast(Cost const & cost, Mana::Annotations annotations) const
+ManaMatcher ManaPool::canCast(Cost const & cost, Mana::Annotations annotations) const
 {
-	if( cost.convertedManaCost() == 0 ) return true;
-	if( pool.size() < cost.minimumManaCost() ) return false; // why bother? ^^
+	ManaMatcher matcher{1};
+	if( cost.convertedManaCost() == 0 ) return matcher;
+	if( pool.size() < cost.minimumManaCost() ) return matcher; // why bother? ^^
 
-	// symbols are sorted from generic to snow to colored, so iteration is done in reverse order to match colors first
-
-	// do a backtrack doing permutations
-	/*
-	 * start backtracking. if a match is found, then break and return true
-atente para variacoes nos iteradores e no phyrexian mana
-W/P matches 0 ou W
-2/W matches 2 or W
-W/R matches W or R
-
-	// for each tested group, it needs to match mana.allowsRestrictions(annotations)
-
-	 */
-
-	 // TODO: implement
-	return false;
+	return matcher.match(cost,*this,annotations);
 }
 
 } /* namespace mtg */
