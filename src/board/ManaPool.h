@@ -21,13 +21,13 @@ public:
 private:
 	// really need a multi index container
 	ManaList pool;
-    std::unordered_multimap<Color, ManaRef, std::hash<int>> byColor;
-    std::unordered_multimap<Mana::Source, ManaRef, std::hash<int>> bySource;
-    std::unordered_multimap<Mana::Annotation, ManaRef, std::hash<unsigned>> byAnnotation;
+	std::unordered_multimap<Color, ManaRef, std::hash<int>> byColor;
+	std::unordered_multimap<Mana::Source, ManaRef, std::hash<int>> bySource;
+	std::unordered_multimap<Mana::Annotation, ManaRef, std::hash<unsigned>> byAnnotation;
 
-    using ByColorCIt = decltype(byColor)::const_iterator;
-    using BySourceCIt = decltype(bySource)::const_iterator;
-    using ByAnnotationCIt = decltype(byAnnotation)::const_iterator;
+	using ByColorCIt = decltype(byColor)::const_iterator;
+	using BySourceCIt = decltype(bySource)::const_iterator;
+	using ByAnnotationCIt = decltype(byAnnotation)::const_iterator;
 public:
 	ManaPool() = default;
 
@@ -52,9 +52,9 @@ namespace std {
 
 template<>
 struct hash<mtg::ManaPool::ManaCRef> {
-    size_t operator()(mtg::ManaPool::ManaCRef const & mcr) const {
-        return std::hash<decltype(mcr.operator->())>()(mcr.operator->());
-    }
+	size_t operator()(mtg::ManaPool::ManaCRef const & mcr) const {
+		return std::hash<decltype(mcr.operator->())>()(mcr.operator->());
+	}
 };
 
 }

@@ -2,22 +2,22 @@
 #include <magic.h>
 
 namespace {
-    struct setup {
-    };
+	struct setup {
+	};
 }
 
 namespace tut { 
 
-    typedef test_group<setup> tg;
-    tg prototypes_test_group("prototypes");
-    
-    typedef tg::object testobject;
-    
-    template<> 
-    template<> 
-    void testobject::test<1>() 
-    {
-        set_test_name("swamp proto");
+	typedef test_group<setup> tg;
+	tg prototypes_test_group("prototypes");
+
+	typedef tg::object testobject;
+
+	template<>
+	template<>
+	void testobject::test<1>()
+	{
+		set_test_name("swamp proto");
 
 		auto land = mtg::prototypes->swamp;
 		// cout << land.name << endl;
@@ -27,6 +27,6 @@ namespace tut {
 		ensure_equals(1,land.land->types.size());
 		ensure(! land.hasColor(mtg::green));
 		ensure(! land.colors_);
-    }
+	}
 
 }

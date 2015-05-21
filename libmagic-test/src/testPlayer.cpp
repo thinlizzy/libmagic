@@ -5,15 +5,15 @@
 #include <iostream>
 
 namespace {
-    struct setup {
+	struct setup {
 		mtg::Player player;
 		setup():
-            player("player")
+			player("player")
 		{
 			mtg::Factory4th factory;
 			player.cards.library.assign(factory.cards.begin(),factory.cards.end());
 		}
-    };
+	};
 
 	void printCard(mtg::Card const & card)
 	{
@@ -28,16 +28,16 @@ namespace {
 
 namespace tut { 
 
-    typedef test_group<setup> tg;
-    tg Player_test_group("Player");
-    
-    typedef tg::object testobject;
-    
-    template<> 
-    template<> 
-    void testobject::test<1>() 
-    {
-        set_test_name("game start");
+	typedef test_group<setup> tg;
+	tg Player_test_group("Player");
+
+	typedef tg::object testobject;
+
+	template<>
+	template<>
+	void testobject::test<1>()
+	{
+		set_test_name("game start");
 
 		auto size = player.cards.library.size();
 		player.draw(7);
@@ -47,13 +47,13 @@ namespace tut {
 		std::cout << std::endl;
 		std::for_each(player.cards.hand.begin(),player.cards.hand.end(),&printCard);
 		std::cout << std::endl;
-    }   
+	}
 
-    template<> 
-    template<> 
-    void testobject::test<2>() 
-    {
-        set_test_name("game start with shuffle and random discard");
+	template<>
+	template<>
+	void testobject::test<2>()
+	{
+		set_test_name("game start with shuffle and random discard");
 
 		player.shuffleLibrary();
 
@@ -70,13 +70,13 @@ namespace tut {
 		ensure_equals( player.cards.hand.size() , 5 );
 		ensure( std::find_if(player.cards.graveyard.begin(),player.cards.graveyard.end(),[it1](mtg::Card const & card){ return card.mainStat == it1->mainStat; }) == it1 );
 		ensure( std::find_if(player.cards.graveyard.begin(),player.cards.graveyard.end(),[it2](mtg::Card const & card){ return card.mainStat == it2->mainStat; }) == it2 );
-    }
+	}
 
-    template<> 
-    template<> 
-    void testobject::test<3>() 
-    {
-        set_test_name("random select and shuffle back");
+	template<>
+	template<>
+	void testobject::test<3>()
+	{
+		set_test_name("random select and shuffle back");
 
 		player.draw(7);
 		auto size = player.cards.library.size();

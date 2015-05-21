@@ -3,7 +3,7 @@
 #include <magic.h>
 
 namespace {
-    struct setup {
+	struct setup {
 		mtg::Card card;
 		mtg::Card card2;
 		setup()
@@ -16,22 +16,22 @@ namespace {
 			card2.secondaryStat->name = "jose";
 			card2.secondaryStat->cost = parseCost("RG");
 		}
-    };
+	};
 }
 
 namespace tut { 
 
-    typedef test_group<setup> tg;
-    tg card_test_group("Card");
+	typedef test_group<setup> tg;
+	tg card_test_group("Card");
 
 	typedef tg::object testobject;
 
-    template<> 
-    template<> 
-    void testobject::test<1>() 
-    {
+	template<>
+	template<>
+	void testobject::test<1>()
+	{
 		using namespace mtg;
-        set_test_name("hasColor");
+		set_test_name("hasColor");
 		// simple
 		ensure( card.hasColor(black) );
 		// split
@@ -44,14 +44,14 @@ namespace tut {
 		card2.kind = transformCard;
 		ensure( card2.hasColor(black) );
 		ensure( ! card2.hasColor(green) );
-    }   
+	}
 
-    template<> 
-    template<> 
-    void testobject::test<2>() 
-    {
+	template<>
+	template<>
+	void testobject::test<2>()
+	{
 		using namespace mtg;
-        set_test_name("hasName");
+		set_test_name("hasName");
 		// simple
 		ensure( card.hasName("diego") );
 		// dual

@@ -3,7 +3,7 @@
 #include <algorithm>
 
 namespace {
-    struct setup {
+	struct setup {
 		mtg::ManaPool pool;
 
 		void checkAllColor(mtg::Color color, int tot) {
@@ -29,53 +29,53 @@ namespace {
 			auto ba = pool.getByAnnotation(annotation);
 			return std::distance(ba.begin(),ba.end());
 		}
-    };
+	};
 }
 
 namespace tut {
-    typedef test_group<setup> tg;
-    tg mana_test_group("mana pool");
+	typedef test_group<setup> tg;
+	tg mana_test_group("mana pool");
 
-    typedef tg::object testobject;
+	typedef tg::object testobject;
 
-    template<>
-    template<>
-    void testobject::test<1>()
-    {
-        set_test_name("empty");
+	template<>
+	template<>
+	void testobject::test<1>()
+	{
+		set_test_name("empty");
 
 		ensure_equals( pool.mana().size() , 0 );
 
 		auto bc = pool.getByColor(mtg::red);
 		ensure( bc.empty() );
-    }
+	}
 
-    template<>
-    template<>
-    void testobject::test<2>()
-    {
-        set_test_name("noncolored only");
+	template<>
+	template<>
+	void testobject::test<2>()
+	{
+		set_test_name("noncolored only");
 
-        pool.add(mtg::colorless);
+		pool.add(mtg::colorless);
 		ensure_equals( pool.mana().size() , 1 );
 
 		auto bc = pool.getByColor(mtg::colorless);
 		ensure( ! bc.empty() );
 
 		checkAllColor(mtg::colorless,1);
-    }
+	}
 
-    template<>
-    template<>
-    void testobject::test<3>()
-    {
-        set_test_name("multiple colors");
+	template<>
+	template<>
+	void testobject::test<3>()
+	{
+		set_test_name("multiple colors");
 
-        pool.add(mtg::colorless);
-        pool.add(mtg::colorless, mtg::Mana::snow, {});
-        pool.add(mtg::red);
-        pool.add(mtg::green);
-        pool.add(mtg::green);
+		pool.add(mtg::colorless);
+		pool.add(mtg::colorless, mtg::Mana::snow, {});
+		pool.add(mtg::red);
+		pool.add(mtg::green);
+		pool.add(mtg::green);
 		ensure_equals( pool.mana().size() , 5 );
 
 		checkAllColor(mtg::colorless,2);
@@ -84,18 +84,18 @@ namespace tut {
 		checkAllColor(mtg::blue,0);
 		checkAllColor(mtg::white,0);
 		checkAllColor(mtg::black,0);
-    }
+	}
 
-    template<>
-    template<>
-    void testobject::test<4>()
-    {
-        set_test_name("snow and annotated");
+	template<>
+	template<>
+	void testobject::test<4>()
+	{
+		set_test_name("snow and annotated");
 
-        pool.add(mtg::colorless);
-        pool.add(mtg::black, mtg::Mana::snow, {});
-        pool.add(mtg::black, {}, {mtg::Mana::abilities});
-        pool.add(mtg::white, mtg::Mana::snow, {mtg::Mana::abilities, mtg::Mana::artifact, });
+		pool.add(mtg::colorless);
+		pool.add(mtg::black, mtg::Mana::snow, {});
+		pool.add(mtg::black, {}, {mtg::Mana::abilities});
+		pool.add(mtg::white, mtg::Mana::snow, {mtg::Mana::abilities, mtg::Mana::artifact, });
 		ensure_equals( pool.mana().size() , 4 );
 
 		checkAllColor(mtg::colorless,1);
@@ -125,23 +125,23 @@ namespace tut {
 			++tar;
 		}
 		ensure_equals( tar , 1 );
-    }
+	}
 
-    template<>
-    template<>
-    void testobject::test<5>()
-    {
-        set_test_name("remove");
+	template<>
+	template<>
+	void testobject::test<5>()
+	{
+		set_test_name("remove");
 
-        pool.add(mtg::colorless);
-        pool.add(mtg::black, mtg::Mana::snow, {});
-        pool.add(mtg::black, {}, {mtg::Mana::abilities});
-        pool.add(mtg::white, mtg::Mana::snow, {mtg::Mana::abilities, mtg::Mana::artifact, });
-        pool.add(mtg::green);
-        pool.add(mtg::green, mtg::Mana::snow, {mtg::Mana::upkeep});
-        pool.add(mtg::green, mtg::Mana::snow, {mtg::Mana::spells});
-        pool.add(mtg::red, {}, {mtg::Mana::upkeep, mtg::Mana::creature});
-        pool.add(mtg::blue);
+		pool.add(mtg::colorless);
+		pool.add(mtg::black, mtg::Mana::snow, {});
+		pool.add(mtg::black, {}, {mtg::Mana::abilities});
+		pool.add(mtg::white, mtg::Mana::snow, {mtg::Mana::abilities, mtg::Mana::artifact, });
+		pool.add(mtg::green);
+		pool.add(mtg::green, mtg::Mana::snow, {mtg::Mana::upkeep});
+		pool.add(mtg::green, mtg::Mana::snow, {mtg::Mana::spells});
+		pool.add(mtg::red, {}, {mtg::Mana::upkeep, mtg::Mana::creature});
+		pool.add(mtg::blue);
 
 		ensure_equals( pool.mana().size() , 9 );
 		ensure_equals( count(mtg::Mana::snow) , 4 );
@@ -150,7 +150,7 @@ namespace tut {
 		ensure_equals( count(mtg::Mana::upkeep) , 2 );
 
 		// remove the first (and the only) white mana
-        auto bc = pool.getByColor(mtg::white);
+		auto bc = pool.getByColor(mtg::white);
 		ensure( ! bc.empty() );
 		pool.remove(*bc.begin());
 		ensure_equals( pool.mana().size() , 8 );
@@ -168,6 +168,6 @@ namespace tut {
 		pool.remove(blackManaAbilities);
 		ensure_equals( count(mtg::Mana::abilities) , 0 );
 		ensure_equals( count(mtg::black) , 1 );
-    }
+	}
 }
 

@@ -134,8 +134,8 @@ public:
 	}
 	typename MatchRangeIterator::value_type operator*() { return s->value(); }
 	MatchRangeIterator & operator++() { s->next(); if( ! s->hasNext() ) s.reset(); return *this; }
-    bool operator==(MatchRangeIterator const & it) const { return s.get() == it.s.get(); } // will only compare with a sentinel
-    bool operator!=(MatchRangeIterator const & it) const { return ! (*this == it); }
+	bool operator==(MatchRangeIterator const & it) const { return s.get() == it.s.get(); } // will only compare with a sentinel
+	bool operator!=(MatchRangeIterator const & it) const { return ! (*this == it); }
 };
 
 struct SymbolMatcher {
