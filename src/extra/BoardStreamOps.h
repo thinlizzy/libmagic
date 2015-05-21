@@ -7,6 +7,9 @@
 
 namespace mtg {
 
+struct Mana;
+
+std::ostream & operator<<(std::ostream & os, Mana const & mana);
 std::ostream & operator<<(std::ostream & os, Player const & player);
 std::ostream & operator<<(std::ostream & os, Permanent const & permanent);
 std::ostream & operator<<(std::ostream & os, CardIt cardIt);

@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <iterator>
+#include <algorithm>
 
 namespace mtg {
 
@@ -138,12 +139,12 @@ public:
 };
 
 struct SymbolMatcher {
-	bool generic;
+	ManaSymbol::Generic generic = 0;
 	bool snow;
 	bool phyrexian;
 	Color color;
 	SymbolMatcher & setColor(Color color) { this->color = color; return *this; }
-	SymbolMatcher & setGeneric() { this->generic = true; return *this; }
+	SymbolMatcher & setGeneric(ManaSymbol::Generic generic) { this->generic = generic; return *this; }
 	SymbolMatcher & setPhyrexian() { this->phyrexian = true; return *this; }
 	SymbolMatcher & setSnow() { this->snow = true; return *this; }
 };
@@ -157,7 +158,7 @@ public:
 		if( symbolMatcher.snow ) {
 			return std::make_unique<MatchRangeIteratorSnow>(manaPool,visited,annotations);
 		}
-		if( symbolMatcher.generic ) {
+		if( symbolMatcher.generic > 0 ) {
 			return std::make_unique<MatchRangeIteratorGeneric>(manaPool,visited,annotations);
 		}
 		return std::make_unique<MatchRangeIteratorColor>(manaPool,visited,annotations,symbolMatcher.color);
@@ -190,10 +191,8 @@ auto symbolMatchers(ManaSymbol symbol)
 	if( symbol.specific == ManaSymbol::snow ) {
 		result.push_back(SymbolMatcher{}.setSnow());
 	} else
-	{
-		for( auto s = 0; s < symbol.generic; ++s ) {
-			result.push_back(SymbolMatcher{}.setGeneric());
-		}
+	if( symbol.generic > 0 ) {
+		result.push_back(SymbolMatcher{}.setGeneric(symbol.generic));
 	}
 	return result;
 }
@@ -209,9 +208,21 @@ ManaMatcher::ManaMatcher(size_t maxSolutions):
 ManaMatcher & ManaMatcher::match(Cost const & cost, ManaPool const & manaPool, Mana::Annotations annotations)
 {
 	solutions.clear();
+
+	// test the obvious solution
+	if( cost.convertedManaCost() == 0 ) {
+		Solution solution;
+		solution.life = 0;
+		solutions.push_back(std::move(solution));
+		return *this;
+	}
+
+	// early bail out on impossible solutions
+	if( manaPool.mana().size() < cost.minimumManaCost() ) return *this;
+
 	visited.clear();
 	life = 0;
-	// symbols are sorted like X-generic-snow-colored, so iteration is done in reverse order to match colors first, then snow
+	// symbols are sorted like X-generic-snow-colored, so iteration is done in reverse order to match colors first, then snow and finally generic
 	doMatch(cost.symbols.rbegin(),cost.symbols.rend(),manaPool,annotations);
 	return *this;
 }
@@ -222,11 +233,16 @@ bool ManaMatcher::doMatch(Cost::Symbols::const_reverse_iterator costIt, Cost::Sy
 	if( solutions.size() >= maxSolutions ) return true; // terminate early if all solutions were recorded
 	if( costIt == costEnd ) {
 		// all cost is consumed, so record a solution
-		// TODO prevent duplicate solutions :))))))))
 		Solution solution;
-		solution.mana.assign(visited.begin(),visited.end());
 		solution.life = life;
-		solutions.push_back(std::move(solution));
+		solution.mana.assign(visited.begin(),visited.end());
+		// sort mana to compare with previous solutions
+		std::sort(solution.mana.begin(),solution.mana.end(),[](auto mr1, auto mr2) {
+			return mr1->rank() < mr2->rank();
+		});
+		if( std::find(solutions.begin(),solutions.end(),solution) == solutions.end() ) {
+			solutions.push_back(std::move(solution));
+		}
 		return true;
 	}
 
@@ -238,6 +254,24 @@ bool ManaMatcher::doMatch(Cost::Symbols::const_reverse_iterator costIt, Cost::Sy
 				return true;
 			}
 			life -= 2;
+		} else
+		if( symbolMatcher.generic > 0 ) {
+			std::vector<ManaPool::ManaCRef> gen;
+			for( auto match : MatchRange{manaPool,visited,symbolMatcher,annotations} ) {
+				gen.push_back(match);
+				if( gen.size() >= symbolMatcher.generic ) break;
+			}
+			if( gen.size() < symbolMatcher.generic ) return false; // not enough to match generic mana
+
+			for( auto elem : gen ) {
+				visited.insert(elem);
+			}
+			if( doMatch(std::next(costIt),costEnd,manaPool,annotations) ) {
+				return true;
+			}
+			for( auto elem : gen ) {
+				visited.erase(elem);
+			}
 		} else {
 			for( auto match : MatchRange{manaPool,visited,symbolMatcher,annotations} ) {
 				visited.insert(match);

@@ -1,5 +1,6 @@
 #include "BoardStreamOps.h"
 #include "CardStreamOps.h"
+#include "../board/Mana.h"
 
 namespace mtg {
 
@@ -23,5 +24,12 @@ std::ostream & operator<<(std::ostream & os, Permanent const & permanent)
 std::ostream & operator<<(std::ostream & os, CardIt cardIt) { return os << *cardIt; }
 
 std::ostream & operator<<(std::ostream & os, PermanentIt permIt) { return os << *permIt; }
+
+std::ostream & operator<<(std::ostream & os, Mana const & mana)
+{
+	return os << mana.color
+			<< "source " << mana.source
+			<< " annotations " << mana.annotations;
+}
 
 }

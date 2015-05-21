@@ -98,28 +98,28 @@ namespace tut {
 		ensure( cost.colorless() );
     }
 
-    template<>
-    template<>
-    void testobject::test<9>()
-    {
-        set_test_name("snow with colors");
+	template<>
+	template<>
+	void testobject::test<9>()
+	{
+		set_test_name("snow with colors");
 		mtg::Cost cost = mtg::parseCost("G2S1");
 		ensure_equals( cost.convertedManaCost() , 5 );
 		ensure( cost.hasColor(mtg::green) );
-    }
+	}
 
 	// colorless mana to start, snow in the middle, then colored at the end
-    int sv(mtg::ManaSymbol s) {
-    	if( s.colored() ) return 1;
-    	if( s.specific == mtg::ManaSymbol::snow ) return 0;
-    	return -1;
-    }
+	int sv(mtg::ManaSymbol s) {
+		if( s.colored() ) return 1;
+		if( s.specific == mtg::ManaSymbol::snow ) return 0;
+		return -1;
+	}
 
-    template<>
-    template<>
-    void testobject::test<10>()
-    {
-        set_test_name("verify sorting");
+	template<>
+	template<>
+	void testobject::test<10>()
+	{
+		set_test_name("verify sorting");
 		mtg::Cost cost = mtg::parseCost("YXG2S1R/P");  // nothing like this should appear in the game
 		std::cout << "unsorted " << cost << std::endl;
 		// sort mana based on importance
@@ -139,7 +139,7 @@ namespace tut {
 		ensure( cost.symbols[5].hasColor(mtg::green) );
 		ensure( cost.symbols[6].hasColor(mtg::red) );
 		ensure_equals( cost.symbols[6].specific , mtg::ManaSymbol::phyrexian );
-    }
+	}
 
     template<>
     template<>

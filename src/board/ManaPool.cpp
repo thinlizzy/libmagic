@@ -1,7 +1,6 @@
 #include "ManaPool.h"
 #include <iterator>
 #include <algorithm>
-#include "ManaMatcher.h"
 
 namespace mtg {
 
@@ -78,15 +77,6 @@ void ManaPool::remove(ManaCRef manaRef)
 	}
 
 	pool.erase(manaRef);
-}
-
-ManaMatcher ManaPool::canCast(Cost const & cost, Mana::Annotations annotations) const
-{
-	ManaMatcher matcher{1};
-	if( cost.convertedManaCost() == 0 ) return matcher;
-	if( pool.size() < cost.minimumManaCost() ) return matcher; // why bother? ^^
-
-	return matcher.match(cost,*this,annotations);
 }
 
 } /* namespace mtg */

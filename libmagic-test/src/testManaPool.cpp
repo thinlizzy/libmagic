@@ -137,7 +137,7 @@ namespace tut {
         pool.add(mtg::black, mtg::Mana::snow, {});
         pool.add(mtg::black, {}, {mtg::Mana::abilities});
         pool.add(mtg::white, mtg::Mana::snow, {mtg::Mana::abilities, mtg::Mana::artifact, });
-        pool.add(mtg::green, {}, {mtg::Mana::burnsOnlyAtEot});
+        pool.add(mtg::green);
         pool.add(mtg::green, mtg::Mana::snow, {mtg::Mana::upkeep});
         pool.add(mtg::green, mtg::Mana::snow, {mtg::Mana::spells});
         pool.add(mtg::red, {}, {mtg::Mana::upkeep, mtg::Mana::creature});
@@ -169,38 +169,5 @@ namespace tut {
 		ensure_equals( count(mtg::Mana::abilities) , 0 );
 		ensure_equals( count(mtg::black) , 1 );
     }
-
-    template<>
-    template<>
-    void testobject::test<6>()
-    {
-        set_test_name("cancast empty");
-
-        mtg::Cost cost = mtg::parseCost("3RR");
-        auto matcher = pool.canCast(cost);
-        ensure_equals( matcher.getSolutions().size() , 0 );
-    }
-
-    template<>
-    template<>
-    void testobject::test<7>()
-    {
-        set_test_name("cancast single color");
-
-        pool.add(mtg::red);
-        pool.add(mtg::red);
-        pool.add(mtg::blue);
-        mtg::Cost cost = mtg::parseCost("1RR");
-        auto matcher = pool.canCast(cost);
-        ensure_equals( matcher.getSolutions().size() , 1 );
-        auto & solution = matcher.getSolutions()[0];
-        ensure_equals( solution.mana.size() , 3 );
-        ensure_equals( solution.life , 0 );
-        // TODO assert solution.mana elements
-    }
-
-    // TODO add more tests (snow, annotations, X, phyrexian)
-
-    // TODO test matcher itself for more than one solution
 }
 

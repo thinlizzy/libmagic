@@ -14,7 +14,7 @@ enum Color {
 	white,
 	black,
 	nColors,
-    colorless = 10,
+    colorless = 8,
     firstColor = green,
 };
 
