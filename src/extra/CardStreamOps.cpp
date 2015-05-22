@@ -76,7 +76,20 @@ std::ostream & operator<<(std::ostream & os, mtg::ColorSet const & colorSet)
 	return os;
 }
 
-std::ostream & operator<<(std::ostream & os, mtg::ManaSymbol const & mp) {
+std::ostream & operator<<(std::ostream & os, mtg::Color const & color)
+{
+	switch(color) {
+		case green: return os << "green";
+		case blue: return os << "blue";
+		case red: return os << "red";
+		case white: return os << "white";
+		case black: return os << "black";
+		case colorless: return os << "colorless";
+		default: return os << "?color?";
+	}
+}
+
+std::ostream & operator<<(std::ostream & os, mtg::CostSymbol const & mp) {
     bool printed = false;
 	if( mp.specific != 0 ) {
 		if( printed ) os << '/';
@@ -84,7 +97,7 @@ std::ostream & operator<<(std::ostream & os, mtg::ManaSymbol const & mp) {
 		os << specChar[mp.specific];
 		printed = true;
 	}
-	if( mp.generic > 0 && mp.specific != mtg::ManaSymbol::snow ) {
+	if( mp.generic > 0 && mp.specific != mtg::CostSymbol::snow ) {
 		os << unsigned(mp.generic);
 		printed = true;
 	}
@@ -102,7 +115,7 @@ std::ostream & operator<<(std::ostream & os, mtg::ManaSymbol const & mp) {
 }
 
 std::ostream & operator<<(std::ostream & os, mtg::Cost const & cost) {
-    std::copy(cost.symbols.begin(),cost.symbols.end(),std::ostream_iterator<mtg::ManaSymbol>(os));
+    std::copy(cost.symbols.begin(),cost.symbols.end(),std::ostream_iterator<mtg::CostSymbol>(os));
     return os;
 }
 

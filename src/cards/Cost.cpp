@@ -16,14 +16,14 @@ bool Cost::operator!=(Cost const & cost) const { return ! (*this == cost); }
 
 Cmc Cost::convertedManaCost() const
 {
-	return std::accumulate(symbols.begin(),symbols.end(),0,[](Cmc t, ManaSymbol symbol) {
+	return std::accumulate(symbols.begin(),symbols.end(),0,[](Cmc t, CostSymbol symbol) {
 		return t+symbol.cmc();
 	});
 }
 
 Cmc Cost::minimumManaCost() const
 {
-	return std::accumulate(symbols.begin(),symbols.end(),0,[](Cmc t, ManaSymbol symbol) {
+	return std::accumulate(symbols.begin(),symbols.end(),0,[](Cmc t, CostSymbol symbol) {
 		return t+symbol.min_cmc();
 	});
 }

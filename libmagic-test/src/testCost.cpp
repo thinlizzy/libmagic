@@ -109,9 +109,9 @@ namespace tut {
 	}
 
 	// colorless mana to start, snow in the middle, then colored at the end
-	int sv(mtg::ManaSymbol s) {
+	int sv(mtg::CostSymbol s) {
 		if( s.colored() ) return 1;
-		if( s.specific == mtg::ManaSymbol::snow ) return 0;
+		if( s.specific == mtg::CostSymbol::snow ) return 0;
 		return -1;
 	}
 
@@ -129,16 +129,16 @@ namespace tut {
 		std::cout << "sorted " << cost << std::endl;
 
 		ensure_equals( cost.convertedManaCost() , 6 );
-		ensure_equals( cost.symbols[0].specific , mtg::ManaSymbol::Y );
-		ensure_equals( cost.symbols[1].specific , mtg::ManaSymbol::X );
+		ensure_equals( cost.symbols[0].specific , mtg::CostSymbol::Y );
+		ensure_equals( cost.symbols[1].specific , mtg::CostSymbol::X );
 		ensure_equals( cost.symbols[2].generic , 2 );
 		// colorless mana should be grouped in a single symbol. this is for testing purposes only
 		ensure_equals( cost.symbols[3].generic , 1 );
-		ensure_equals( cost.symbols[4].specific , mtg::ManaSymbol::snow );
+		ensure_equals( cost.symbols[4].specific , mtg::CostSymbol::snow );
 		ensure_equals( cost.symbols[4].generic , 1 );
 		ensure( cost.symbols[5].hasColor(mtg::green) );
 		ensure( cost.symbols[6].hasColor(mtg::red) );
-		ensure_equals( cost.symbols[6].specific , mtg::ManaSymbol::phyrexian );
+		ensure_equals( cost.symbols[6].specific , mtg::CostSymbol::phyrexian );
 	}
 
 	template<>

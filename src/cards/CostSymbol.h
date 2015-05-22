@@ -8,7 +8,7 @@ namespace mtg {
 
 using Cmc = unsigned;
 
-struct ManaSymbol {
+struct CostSymbol {
 	enum Specific {
 		X=1, Y, Z, phyrexian, snow,
 	};
@@ -16,13 +16,13 @@ struct ManaSymbol {
 
 	ColorSet colors;   // green, blue, red, white, black
 	Specific specific = {};
-	Generic generic;
+	Generic generic = 0;
 
-	ManaSymbol();
-	ManaSymbol(Generic generic);
-	ManaSymbol(Generic generic, Color c);
-	ManaSymbol(Color c, Color c2);
-	// TODO review these constructors
+	explicit CostSymbol(Generic generic = 0);
+	explicit CostSymbol(Color c, Generic generic = 0);
+	CostSymbol(Color c, Color c2);
+	explicit CostSymbol(Specific s, Generic generic = 0);
+	CostSymbol(Specific s, Color c);
 
 	Cmc cmc() const;
 	Cmc min_cmc() const;
@@ -30,8 +30,9 @@ struct ManaSymbol {
 	bool colorless() const;
 	bool colored() const;
     bool monoColored() const;
+    Color firstColor() const;
 
-	bool operator==(ManaSymbol const & mp) const;
+	bool operator==(CostSymbol const & mp) const;
 };
 
 } /* namespace mtg */
@@ -39,8 +40,8 @@ struct ManaSymbol {
 namespace std {
 
 template<>
-struct hash<mtg::ManaSymbol> {
-    size_t operator()(mtg::ManaSymbol const & mp) const {
+struct hash<mtg::CostSymbol> {
+    size_t operator()(mtg::CostSymbol const & mp) const {
         return
             std::hash<decltype(mp.colors)>()(mp.colors) ^
             std::hash<decltype(mp.generic)>()(mp.generic)

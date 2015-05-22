@@ -9,7 +9,7 @@ using namespace automata;
 class Parser {
 	bool sameSymbol;
 	bool pending;
-	ManaSymbol acc;
+	CostSymbol acc;
 	Cost::Symbols symbols;
 	FiniteAutomata<Range<char>,MealyTransition<Range<char>>> parser;
 
@@ -21,18 +21,18 @@ class Parser {
 	        case 'R': acc.colors.set(red); break;
 	        case 'W': acc.colors.set(white); break;
 	        case 'B': acc.colors.set(black); break;
-	        case 'X': acc.specific = ManaSymbol::X; break;
-	        case 'Y': acc.specific = ManaSymbol::Y; break;
-	        case 'Z': acc.specific = ManaSymbol::Z; break;
-	        case 'P': acc.specific = ManaSymbol::phyrexian; break;
-	        case 'S': acc.specific = ManaSymbol::snow; break;
+	        case 'X': acc.specific = CostSymbol::X; break;
+	        case 'Y': acc.specific = CostSymbol::Y; break;
+	        case 'Z': acc.specific = CostSymbol::Z; break;
+	        case 'P': acc.specific = CostSymbol::phyrexian; break;
+	        case 'S': acc.specific = CostSymbol::snow; break;
 	        default: throw std::invalid_argument(c + std::string(" is a invalid char to set mana pattern"));
 		}
 	}
 
 	void clear() {
 		if( sameSymbol ) return;
-		acc = ManaSymbol();
+		acc = CostSymbol();
 		pending = false;
 	}
 	void emit() {
@@ -137,7 +137,7 @@ public:
 		parser.getNode("P").final = true;
 	}
 
-	std::vector<ManaSymbol> & parse(std::string const & cost)
+	std::vector<CostSymbol> & parse(std::string const & cost)
 	{
 		sameSymbol = false;
 		clear();

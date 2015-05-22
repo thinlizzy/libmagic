@@ -36,6 +36,7 @@ std::ostream & operator<<(std::ostream & os, Card const & card);
 std::ostream & operator<<(std::ostream & os, mtg::ManaPattern const & mp);
 std::ostream & operator<<(std::ostream & os, mtg::Cost const & cost);
 std::ostream & operator<<(std::ostream & os, mtg::ColorSet const & colorSet);
+std::ostream & operator<<(std::ostream & os, mtg::Color const & color);
 
 }
 

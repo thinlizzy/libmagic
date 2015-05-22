@@ -3,13 +3,13 @@
 
 #include <vector>
 #include "Color.h"
-#include "ManaSymbol.h"
+#include "CostSymbol.h"
 
 namespace mtg {
 
 class Cost {
 public:
-	using Symbols = std::vector<ManaSymbol>;
+	using Symbols = std::vector<CostSymbol>;
 	Symbols symbols;
 
 	Cost() = default;

@@ -127,10 +127,12 @@ public:
 	MatchRangeIterator(MatchRangeIterator const & mri):
 		s(mri.s ? mri.s->clone() : nullptr)
 	{}
-	MatchRangeIterator(std::unique_ptr<MatchRangeIteratorStrategy> s):
-		s(std::move(s))
+	MatchRangeIterator(std::unique_ptr<MatchRangeIteratorStrategy> s_):
+		s(std::move(s_))
 	{
-		if( s && ! s->hasNext() ) s.reset(); // return to sentinel if no more elements
+		if( s && ! s->hasNext() ) {
+			s.reset(); // return to sentinel if no more elements
+		}
 	}
 	typename MatchRangeIterator::value_type operator*() { return s->value(); }
 	MatchRangeIterator & operator++() { s->next(); if( ! s->hasNext() ) s.reset(); return *this; }
@@ -138,35 +140,24 @@ public:
 	bool operator!=(MatchRangeIterator const & it) const { return ! (*this == it); }
 };
 
-struct SymbolMatcher {
-	ManaSymbol::Generic generic = 0;
-	bool snow;
-	bool phyrexian;
-	Color color;
-	SymbolMatcher & setColor(Color color) { this->color = color; return *this; }
-	SymbolMatcher & setGeneric(ManaSymbol::Generic generic) { this->generic = generic; return *this; }
-	SymbolMatcher & setPhyrexian() { this->phyrexian = true; return *this; }
-	SymbolMatcher & setSnow() { this->snow = true; return *this; }
-};
-
 class MatchRange {
 	MatchRangeIterator beg;
 public:
 	static std::unique_ptr<MatchRangeIteratorStrategy> matchRangeIteratorFactory(ManaPool const & manaPool,
-			ManaMatcher::Visited const & visited, SymbolMatcher symbolMatcher, Mana::Annotations annotations) {
+			ManaMatcher::Visited const & visited, CostSymbol symbol, Mana::Annotations annotations) {
 		// phyrexian was already dealt with and X, Y and Z will be ignored for simplicity, so only snow matters now for specific mana.
-		if( symbolMatcher.snow ) {
+		if( symbol.specific == CostSymbol::snow ) {
 			return std::make_unique<MatchRangeIteratorSnow>(manaPool,visited,annotations);
 		}
-		if( symbolMatcher.generic > 0 ) {
+		if( symbol.generic > 0 ) {
 			return std::make_unique<MatchRangeIteratorGeneric>(manaPool,visited,annotations);
 		}
-		return std::make_unique<MatchRangeIteratorColor>(manaPool,visited,annotations,symbolMatcher.color);
+		return std::make_unique<MatchRangeIteratorColor>(manaPool,visited,annotations,symbol.firstColor());
 	}
 
 	MatchRange(ManaPool const & manaPool, ManaMatcher::Visited const & visited,
-		SymbolMatcher symbolMatcher, Mana::Annotations annotations):
-			beg(matchRangeIteratorFactory(manaPool,visited,symbolMatcher,annotations))
+			CostSymbol symbol, Mana::Annotations annotations):
+			beg(matchRangeIteratorFactory(manaPool,visited,symbol,annotations))
 	{
 	}
 
@@ -175,24 +166,22 @@ public:
 	MatchRangeIterator end() { return MatchRangeIterator{}; }
 };
 
-auto symbolMatchers(ManaSymbol symbol)
+// serialize all symbol matchers
+auto symbolMatchers(CostSymbol symbol)
 {
-	std::vector<SymbolMatcher> result;
+	std::vector<CostSymbol> result;
 	if( symbol.colored() ) {
 		for( auto color = firstColor; color != nColors; color = Color(color+1) ) {
 			if( symbol.hasColor(color) ) {
-				result.push_back(SymbolMatcher{}.setColor(color));
+				result.push_back(CostSymbol(color));
 			}
 		}
 	}
-	if( symbol.specific == ManaSymbol::phyrexian ) {
-		result.push_back(SymbolMatcher{}.setPhyrexian());
-	} else
-	if( symbol.specific == ManaSymbol::snow ) {
-		result.push_back(SymbolMatcher{}.setSnow());
+	if( symbol.specific != 0 ) {
+		result.push_back(CostSymbol(symbol.specific));
 	} else
 	if( symbol.generic > 0 ) {
-		result.push_back(SymbolMatcher{}.setGeneric(symbol.generic));
+		result.push_back(CostSymbol(symbol.generic));
 	}
 	return result;
 }
@@ -247,21 +236,27 @@ bool ManaMatcher::doMatch(Cost::Symbols::const_reverse_iterator costIt, Cost::Sy
 	}
 
 	// decouple and serialize a symbol matcher (e.g: W/P = list with [W P]. 2/W = [W 1 1]). use colored first
-	for( auto symbolMatcher : symbolMatchers(*costIt) ) {
-		if( symbolMatcher.phyrexian ) {
+	for( auto symbol : symbolMatchers(*costIt) ) {
+		if( symbol.specific == CostSymbol::X || symbol.specific == CostSymbol::Y || symbol.specific == CostSymbol::Z ) {
+			// just consume it
+			if( doMatch(std::next(costIt),costEnd,manaPool,annotations) ) {
+				return true;
+			}
+		} else
+		if( symbol.specific == CostSymbol::phyrexian ) {
 			life += 2;
 			if( doMatch(std::next(costIt),costEnd,manaPool,annotations) ) {
 				return true;
 			}
 			life -= 2;
 		} else
-		if( symbolMatcher.generic > 0 ) {
+		if( symbol.generic > 0 ) {
 			std::vector<ManaPool::ManaCRef> gen;
-			for( auto match : MatchRange{manaPool,visited,symbolMatcher,annotations} ) {
+			for( auto match : MatchRange{manaPool,visited,symbol,annotations} ) {
 				gen.push_back(match);
-				if( gen.size() >= symbolMatcher.generic ) break;
+				if( gen.size() >= symbol.generic ) break;
 			}
-			if( gen.size() < symbolMatcher.generic ) return false; // not enough to match generic mana
+			if( gen.size() < symbol.generic ) return false; // not enough to match generic mana
 
 			for( auto elem : gen ) {
 				visited.insert(elem);
@@ -273,7 +268,7 @@ bool ManaMatcher::doMatch(Cost::Symbols::const_reverse_iterator costIt, Cost::Sy
 				visited.erase(elem);
 			}
 		} else {
-			for( auto match : MatchRange{manaPool,visited,symbolMatcher,annotations} ) {
+			for( auto match : MatchRange{manaPool,visited,symbol,annotations} ) {
 				visited.insert(match);
 				if( doMatch(std::next(costIt),costEnd,manaPool,annotations) ) {
 					return true;
