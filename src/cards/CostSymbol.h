@@ -2,7 +2,7 @@
 #define MANASYMBOL_H_LIBMAGIC_2015_17_05
 
 #include <bitset>
-#include "Color.h"
+#include "Colors.h"
 
 namespace mtg {
 
@@ -14,7 +14,7 @@ struct CostSymbol {
 	};
 	using Generic = unsigned char;
 
-	ColorSet colors;   // green, blue, red, white, black
+	ColorSet colors;
 	Specific specific = {};
 	Generic generic = 0;
 

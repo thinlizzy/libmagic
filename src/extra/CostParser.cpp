@@ -16,11 +16,11 @@ class Parser {
 	void setChar(char c)
 	{
 		switch(c) {
-	        case 'G': acc.colors.set(green); break;
-	        case 'U': acc.colors.set(blue); break;
-	        case 'R': acc.colors.set(red); break;
-	        case 'W': acc.colors.set(white); break;
-	        case 'B': acc.colors.set(black); break;
+	        case 'G': acc.colors.set(Color::green); break;
+	        case 'U': acc.colors.set(Color::blue); break;
+	        case 'R': acc.colors.set(Color::red); break;
+	        case 'W': acc.colors.set(Color::white); break;
+	        case 'B': acc.colors.set(Color::black); break;
 	        case 'X': acc.specific = CostSymbol::X; break;
 	        case 'Y': acc.specific = CostSymbol::Y; break;
 	        case 'Z': acc.specific = CostSymbol::Z; break;
@@ -97,12 +97,12 @@ public:
 			setChar('P');
 		};
 
-		for( int ci = 0; ci < nColors; ++ci ) {
-			parser.setTrans("start",colorText[ci],"color").output = bind(&Parser::newChar,this,_1);
-			parser.setTrans("digit",colorText[ci],"color").output =
-			parser.setTrans("color",colorText[ci],"color").output =
-			parser.setTrans("XYZ",colorText[ci],"color").output = bind(&Parser::emitAndNewChar,this,_1);
-			parser.setTrans("slash",colorText[ci],"color").output = [&](char c) {
+		for( auto color : ColorList() ) {
+			parser.setTrans("start",colorText(color),"color").output = bind(&Parser::newChar,this,_1);
+			parser.setTrans("digit",colorText(color),"color").output =
+			parser.setTrans("color",colorText(color),"color").output =
+			parser.setTrans("XYZ",colorText(color),"color").output = bind(&Parser::emitAndNewChar,this,_1);
+			parser.setTrans("slash",colorText(color),"color").output = [&](char c) {
 				setChar(c);
 			};
 		}

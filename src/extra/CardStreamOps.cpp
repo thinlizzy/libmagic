@@ -66,10 +66,10 @@ std::ostream & operator<<(std::ostream & os, SpellType const & type) {
 std::ostream & operator<<(std::ostream & os, mtg::ColorSet const & colorSet)
 {
     bool printed = false;
-	for( unsigned c = mtg::nColors; c-->0;  ) {
-		if( colorSet[c] ) {
+	for( auto color : ColorList() ) {
+		if( colorSet.hasColor(color) ) {
 			if( printed ) os << '/';
-			os << mtg::colorText[c];
+			os << colorText(color);
 			printed = true;
 		}
 	}
@@ -79,13 +79,13 @@ std::ostream & operator<<(std::ostream & os, mtg::ColorSet const & colorSet)
 std::ostream & operator<<(std::ostream & os, mtg::Color const & color)
 {
 	switch(color) {
-		case green: return os << "green";
-		case blue: return os << "blue";
-		case red: return os << "red";
-		case white: return os << "white";
-		case black: return os << "black";
-		case colorless: return os << "colorless";
-		default: return os << "?color?";
+		case Color::green: return os << "green";
+		case Color::blue: return os << "blue";
+		case Color::red: return os << "red";
+		case Color::white: return os << "white";
+		case Color::black: return os << "black";
+		case Color::colorless: return os << "colorless";
+		default: return os << "multiple";
 	}
 }
 
@@ -101,10 +101,10 @@ std::ostream & operator<<(std::ostream & os, mtg::CostSymbol const & mp) {
 		os << unsigned(mp.generic);
 		printed = true;
 	}
-	for( unsigned c = mtg::nColors; c-->0;  ) {
-		if( mp.colors[c] ) {
+	for( auto color : ColorList() ) {
+		if( mp.hasColor(color) ) {
 			if( printed ) os << '/';
-			os << mtg::colorText[c];
+			os << mtg::colorText(color);
 			printed = true;
 		}
 	}

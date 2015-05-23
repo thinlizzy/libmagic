@@ -6,7 +6,7 @@
 #include <list>
 #include <initializer_list>
 #include <iterator>
-#include "../cards/Color.h"
+#include "../cards/Colors.h"
 #include "../iterator/iterator_second.h"
 #include "../iterator/pair_range.h"
 #include "Mana.h"
@@ -21,7 +21,7 @@ public:
 private:
 	// really need a multi index container
 	ManaList pool;
-	std::unordered_multimap<Color, ManaRef, std::hash<int>> byColor;
+	std::unordered_multimap<Color, ManaRef> byColor;
 	std::unordered_multimap<Mana::Source, ManaRef, std::hash<int>> bySource;
 	std::unordered_multimap<Mana::Annotation, ManaRef, std::hash<unsigned>> byAnnotation;
 

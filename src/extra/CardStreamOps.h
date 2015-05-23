@@ -9,7 +9,7 @@
 #include "../cards/types/SuperType.h"
 #include "../cards/types/CardType.h"
 #include "../cards/types/PlaneswalkerType.h"
-#include "../cards/Color.h"
+#include "../cards/Colors.h"
 
 namespace mtg {
     

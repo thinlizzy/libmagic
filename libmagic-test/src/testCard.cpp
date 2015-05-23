@@ -33,17 +33,17 @@ namespace tut {
 		using namespace mtg;
 		set_test_name("hasColor");
 		// simple
-		ensure( card.hasColor(black) );
+		ensure( card.hasColor(Color::black) );
 		// split
-		ensure( card2.hasColor(black) );
-		ensure( card2.hasColor(green) );
-		ensure( card2.hasColor(red) );
-		ensure( ! card2.hasColor(blue) );
-		ensure( ! card2.hasColor(white) );
+		ensure( card2.hasColor(Color::black) );
+		ensure( card2.hasColor(Color::green) );
+		ensure( card2.hasColor(Color::red) );
+		ensure( ! card2.hasColor(Color::blue) );
+		ensure( ! card2.hasColor(Color::white) );
 		// changed to transform to ensure only split counts both colors
 		card2.kind = transformCard;
-		ensure( card2.hasColor(black) );
-		ensure( ! card2.hasColor(green) );
+		ensure( card2.hasColor(Color::black) );
+		ensure( ! card2.hasColor(Color::green) );
 	}
 
 	template<>

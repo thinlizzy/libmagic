@@ -171,7 +171,7 @@ auto symbolMatchers(CostSymbol symbol)
 {
 	std::vector<CostSymbol> result;
 	if( symbol.colored() ) {
-		for( auto color = firstColor; color != nColors; color = Color(color+1) ) {
+		for( auto color : ColorList() ) {
 			if( symbol.hasColor(color) ) {
 				result.push_back(CostSymbol(color));
 			}

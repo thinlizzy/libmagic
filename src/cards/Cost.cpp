@@ -45,7 +45,7 @@ bool Cost::colorless() const
 ColorSet Cost::colors() const
 {
 	return std::accumulate(symbols.begin(),symbols.end(),ColorSet{},[](ColorSet t, auto symbol) {
-		return t |= symbol.colors;
+		return t.set(symbol.colors.colors());
 	});
 }
 

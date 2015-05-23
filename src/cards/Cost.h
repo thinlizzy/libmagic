@@ -2,7 +2,7 @@
 #define COST_H_kjk4530k3n
 
 #include <vector>
-#include "Color.h"
+#include "Colors.h"
 #include "CostSymbol.h"
 
 namespace mtg {

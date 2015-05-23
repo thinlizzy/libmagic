@@ -39,7 +39,7 @@ namespace tut {
 		set_test_name("beseech the queen");
 		mtg::Cost cost = mtg::parseCost("2/B2/B2/B");
 		ensure_equals( cost.convertedManaCost() , 6 );
-		ensure( cost.hasColor(mtg::black) );
+		ensure( cost.hasColor(mtg::Color::black) );
 	}
 
 	template<>
@@ -49,11 +49,11 @@ namespace tut {
 		set_test_name("mixed");
 		mtg::Cost cost = mtg::parseCost("1WR/B");
 		ensure_equals( cost.convertedManaCost() , 3 );
-		ensure( ! cost.hasColor(mtg::green) );
-		ensure( ! cost.hasColor(mtg::blue) );
-		ensure( cost.hasColor(mtg::black) );
-		ensure( cost.hasColor(mtg::red) );
-		ensure( cost.hasColor(mtg::white) );
+		ensure( ! cost.hasColor(mtg::Color::green) );
+		ensure( ! cost.hasColor(mtg::Color::blue) );
+		ensure( cost.hasColor(mtg::Color::black) );
+		ensure( cost.hasColor(mtg::Color::red) );
+		ensure( cost.hasColor(mtg::Color::white) );
 	}
 
 	template<>
@@ -63,8 +63,8 @@ namespace tut {
 		set_test_name("fireball");
 		mtg::Cost cost = mtg::parseCost("XR");
 		ensure_equals( cost.convertedManaCost() , 1 );
-		ensure( cost.hasColor(mtg::red) );
-		ensure( ! cost.hasColor(mtg::green) );
+		ensure( cost.hasColor(mtg::Color::red) );
+		ensure( ! cost.hasColor(mtg::Color::green) );
 	}
 
 	template<>
@@ -74,7 +74,7 @@ namespace tut {
 		set_test_name("mind warp");
 		mtg::Cost cost = mtg::parseCost("X3B");
 		ensure_equals( cost.convertedManaCost() , 4 );
-		ensure( cost.hasColor(mtg::black) );
+		ensure( cost.hasColor(mtg::Color::black) );
 	}
 
 	template<>
@@ -84,8 +84,8 @@ namespace tut {
 		set_test_name("unknown card");
 		mtg::Cost cost = mtg::parseCost("15 2/R/G");
 		ensure_equals( cost.convertedManaCost() , 17 );
-		ensure( cost.hasColor(mtg::red) );
-		ensure( cost.hasColor(mtg::green) );
+		ensure( cost.hasColor(mtg::Color::red) );
+		ensure( cost.hasColor(mtg::Color::green) );
 	}
 
 	template<>
@@ -105,7 +105,7 @@ namespace tut {
 		set_test_name("snow with colors");
 		mtg::Cost cost = mtg::parseCost("G2S1");
 		ensure_equals( cost.convertedManaCost() , 5 );
-		ensure( cost.hasColor(mtg::green) );
+		ensure( cost.hasColor(mtg::Color::green) );
 	}
 
 	// colorless mana to start, snow in the middle, then colored at the end
@@ -136,8 +136,8 @@ namespace tut {
 		ensure_equals( cost.symbols[3].generic , 1 );
 		ensure_equals( cost.symbols[4].specific , mtg::CostSymbol::snow );
 		ensure_equals( cost.symbols[4].generic , 1 );
-		ensure( cost.symbols[5].hasColor(mtg::green) );
-		ensure( cost.symbols[6].hasColor(mtg::red) );
+		ensure( cost.symbols[5].hasColor(mtg::Color::green) );
+		ensure( cost.symbols[6].hasColor(mtg::Color::red) );
 		ensure_equals( cost.symbols[6].specific , mtg::CostSymbol::phyrexian );
 	}
 

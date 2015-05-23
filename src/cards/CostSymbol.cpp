@@ -45,30 +45,27 @@ Cmc CostSymbol::min_cmc() const
 
 bool CostSymbol::hasColor(Color c) const
 {
-	return colors[c];
+	return colors.hasColor(c);
 }
 
 bool CostSymbol::colorless() const
 {
-	return colors.none();
+	return colors.colorless();
 }
 
 bool CostSymbol::colored() const
 {
-	return colors.any();
+	return colors.colored();
 }
 
 bool CostSymbol::monoColored() const
 {
-    return colors.count() == 1;
+    return colors.monoColored();
 }
 
 Color CostSymbol::firstColor() const
 {
-	for( auto color = mtg::firstColor; color != nColors; color = Color(color+1) ) {
-		if( hasColor(color) ) return color;
-	}
-	return mtg::colorless;
+	return colors.color();
 }
 
 bool CostSymbol::operator==(CostSymbol const & mp) const

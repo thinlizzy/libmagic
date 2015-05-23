@@ -51,11 +51,11 @@ Prototypes::Prototypes():
 	sorcery(createCard(mtg::sorcery)),
 	instant(createCard(mtg::instant)),
 	planeswalker(createPlaneswalker()),
-	forest(createBasicLand("Forest",mtg::forest,green)),
-	island(createBasicLand("Island",mtg::island,blue)),
-	mountain(createBasicLand("Mountain",mtg::mountain,red)),
-	plains(createBasicLand("Plains",mtg::plains,white)),
-	swamp(createBasicLand("Swamp",mtg::swamp,black))
+	forest(createBasicLand("Forest",mtg::forest,Color::green)),
+	island(createBasicLand("Island",mtg::island,Color::blue)),
+	mountain(createBasicLand("Mountain",mtg::mountain,Color::red)),
+	plains(createBasicLand("Plains",mtg::plains,Color::white)),
+	swamp(createBasicLand("Swamp",mtg::swamp,Color::black))
 {
 }
 
@@ -64,7 +64,7 @@ CardStat Prototypes::createBasicLand(std::string const & name, LandType type, Co
 	CardStat result(this->land);
 	result.name = name;
 	result.land->types.insert(type);
-	result.text = std::string("{T} add {") + colorText[color] + "} to your mana pool";		// TODO change to format()
+	result.text = std::string("{T} add {") + colorText(color) + "} to your mana pool";		// TODO change to format()
 	return result;
 }
 

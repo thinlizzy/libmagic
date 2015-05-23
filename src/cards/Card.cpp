@@ -22,7 +22,7 @@ CardStat::CardStat():
 
 bool CardStat::hasColor(Color color) const
 {
-	return colors()[color];
+	return colors().hasColor(color);
 }
 
 ColorSet CardStat::colors() const
@@ -122,7 +122,7 @@ bool Card::isLand() const
 
 bool Card::hasColor(Color color) const
 {
-	return colors()[color];
+	return colors().hasColor(color);
 }
 
 ColorSet Card::colors() const
@@ -130,7 +130,7 @@ ColorSet Card::colors() const
 	auto result = mainStat.colors();
 	if( kind == splitCard ) {
 		if( ! secondaryStat ) throw std::logic_error("split cards should have a secondary stat");
-		result |= secondaryStat->colors();
+		result.set(secondaryStat->colors().colors());
 	}
 	return result;
 }

@@ -1,7 +1,7 @@
 #ifndef MANA_H_LIBMAGIC_2015_21_05
 #define MANA_H_LIBMAGIC_2015_21_05
 
-#include "../cards/Color.h"
+#include "../cards/Colors.h"
 
 namespace mtg {
 
@@ -21,7 +21,7 @@ struct Mana {
 	Annotations annotations;
 
     int rank() const {
-    	return int(annotations) * 100 + (color == colorless ? 0 : int(color)+1) * 10 + int(source);
+    	return int(annotations) * 100 + colorValue(color) * 10 + int(source);
     }
 
 	bool operator==(Mana const & mana) const {
