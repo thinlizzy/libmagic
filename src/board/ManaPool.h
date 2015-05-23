@@ -6,6 +6,7 @@
 #include <list>
 #include <initializer_list>
 #include <iterator>
+#include <unordered_set>
 #include "../cards/Colors.h"
 #include "../iterator/iterator_second.h"
 #include "../iterator/pair_range.h"
@@ -18,6 +19,7 @@ public:
 	using ManaList = std::list<Mana>;
 	using ManaRef = ManaList::iterator;
 	using ManaCRef = ManaList::const_iterator;
+	using ManaSet = std::unordered_set<ManaCRef>;
 private:
 	// really need a multi index container
 	ManaList pool;

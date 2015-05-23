@@ -1,5 +1,6 @@
+#include "behavior/ManaMatcher.h"
+
 #include "board/Battlefield.h"
-#include "board/ManaMatcher.h"
 #include "board/Permanent.h"
 #include "board/Player.h"
 #include "board/Targets.h"

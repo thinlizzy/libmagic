@@ -181,7 +181,132 @@ namespace tut {
 		ensure( bool(matcher.match(cost, pool)) );
 	}
 
-	// TODO add more tests (annotations, W/P, 2/W, R/W)
+
+	template<>
+	template<>
+	void testobject::test<12>()
+	{
+		set_test_name("multiple color matchers single");
+		pool.add(mtg::Color::white);
+		mtg::Cost cost = mtg::parseCost("W/R");
+		mtg::ManaMatcher matcher;
+		ensure( bool(matcher.match(cost, pool)) );
+	}
+
+	template<>
+	template<>
+	void testobject::test<13>()
+	{
+		set_test_name("multiple color matchers");
+		pool.add(mtg::Color::white);
+		pool.add(mtg::Color::red);
+		mtg::Cost cost = mtg::parseCost("{W/R}{R/G}");
+		mtg::ManaMatcher matcher;
+		ensure( bool(matcher.match(cost, pool)) );
+	}
+
+	template<>
+	template<>
+	void testobject::test<14>()
+	{
+		set_test_name("multiple color matchers fail");
+		pool.add(mtg::Color::red);
+		pool.add(mtg::Color::blue);
+		pool.add(mtg::Color::black);
+		mtg::Cost cost = mtg::parseCost("{1}{W/R}{R/G}");
+		mtg::ManaMatcher matcher;
+		ensure_not( bool(matcher.match(cost, pool)) );
+	}
+
+	// TODO fix failure
+	template<>
+	template<>
+	void testobject::test<15>()
+	{
+		set_test_name("multiple color matchers two solutions");
+		pool.add(mtg::Color::red);
+		pool.add(mtg::Color::white);
+		pool.add(mtg::Color::red);
+		mtg::Cost cost = mtg::parseCost("{W/R}{R/G}");
+		mtg::ManaMatcher matcher(3);
+		ensure_equals( matcher.match(cost, pool).getSolutions().size() , 2 );
+	}
+
+	template<>
+	template<>
+	void testobject::test<16>()
+	{
+		set_test_name("beseech the queen black only");
+		pool.add(mtg::Color::black);
+		pool.add(mtg::Color::black);
+		pool.add(mtg::Color::black);
+		mtg::Cost cost = mtg::parseCost("{2/B}{2/B}{2/B}");
+		mtg::ManaMatcher matcher;
+		ensure( bool(matcher.match(cost, pool)) );
+	}
+
+	template<>
+	template<>
+	void testobject::test<17>()
+	{
+		set_test_name("beseech the queen generic only");
+		pool.add(mtg::Color::red);
+		pool.add(mtg::Color::blue);
+		pool.add(mtg::Color::green);
+		pool.add(mtg::Color::red);
+		pool.add(mtg::Color::blue);
+		pool.add(mtg::Color::green);
+		mtg::Cost cost = mtg::parseCost("{2/B}{2/B}{2/B}");
+		mtg::ManaMatcher matcher;
+		ensure( bool(matcher.match(cost, pool)) );
+	}
+
+	template<>
+	template<>
+	void testobject::test<18>()
+	{
+		set_test_name("beseech the queen mixed exact");
+		pool.add(mtg::Color::green);
+		pool.add(mtg::Color::black);
+		pool.add(mtg::Color::red);
+		pool.add(mtg::Color::blue);
+		pool.add(mtg::Color::green);
+		mtg::Cost cost = mtg::parseCost("{2/B}{2/B}{2/B}");
+		mtg::ManaMatcher matcher;
+		ensure( bool(matcher.match(cost, pool)) );
+	}
+
+	// TODO fix failure
+	template<>
+	template<>
+	void testobject::test<19>()
+	{
+		set_test_name("beseech the queen mixed more solutions");
+		pool.add(mtg::Color::green);
+		pool.add(mtg::Color::black);
+		pool.add(mtg::Color::red);
+		pool.add(mtg::Color::black);
+		pool.add(mtg::Color::blue);
+		mtg::Cost cost = mtg::parseCost("{2/B}{2/B}{2/B}");
+		mtg::ManaMatcher matcher{6};
+		ensure_equals( matcher.match(cost, pool).getSolutions().size() , 4 );
+	}
+
+	// TODO fix failure
+	template<>
+	template<>
+	void testobject::test<20>()
+	{
+		set_test_name("unknown card mixed");
+		pool.add(mtg::Color::black);
+		pool.add(mtg::Color::black);
+		pool.add(mtg::Color::blue);
+		mtg::Cost cost = mtg::parseCost("{2/B}{2/R}");
+		mtg::ManaMatcher matcher;
+		ensure( bool(matcher.match(cost, pool)) );
+	}
+
+	// TODO add more tests (annotations, W/P)
 
 	// TODO test for more than one solution with phyrexian, generic and multiple
 }

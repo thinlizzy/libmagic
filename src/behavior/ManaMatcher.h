@@ -1,9 +1,8 @@
 #ifndef MANAMATCHER_H_LIBMAGIC_2015_17_05
 #define MANAMATCHER_H_LIBMAGIC_2015_17_05
 
-#include "ManaPool.h"
+#include "../board/ManaPool.h"
 #include "../cards/Cost.h"
-#include <unordered_set>
 #include <vector>
 
 namespace mtg {
@@ -11,7 +10,6 @@ namespace mtg {
 class ManaMatcher {
 public:
 	using Life = unsigned;
-	using Visited = std::unordered_set<ManaPool::ManaCRef>;
 	struct Solution {
 		std::vector<ManaPool::ManaCRef> mana;
 		Life life;
@@ -19,7 +17,7 @@ public:
 	};
 	using Solutions = std::vector<Solution>;
 private:
-	Visited visited;
+	ManaPool::ManaSet visited;
 	Life life;
 	Solutions solutions;
 	size_t maxSolutions;
