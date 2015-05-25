@@ -11,7 +11,7 @@ namespace mtg {
 // generic mana and even colored mana can match a lot of combinations
 // for each tested group, it needs to match mana.allowsRestrictions(annotations)
 
-// serialize all symbol matchers
+// decouple and serialize a symbol matcher (e.g: W/P = list with [W P]. 2/W = [W 1 1]). use colored first
 auto symbolMatchers(CostSymbol symbol)
 {
 	std::vector<CostSymbol> result;
@@ -54,14 +54,60 @@ ManaMatcher & ManaMatcher::match(Cost const & cost, ManaPool const & manaPool, M
 	// early bail out on impossible solutions
 	if( manaPool.mana().size() < cost.minimumManaCost() ) return *this;
 
-	visited.clear();
-	life = 0;
+	currentMatcher.resize(cost.symbols.size());
+	tryPermutations(0,cost.symbols,manaPool,annotations);
+	return *this;
+/*
 	// symbols are sorted like X-generic-snow-colored, so iteration is done in reverse order to match colors first, then snow and finally generic
 	doMatch(cost.symbols.rbegin(),cost.symbols.rend(),manaPool,annotations);
 	return *this;
+*/
 }
 
-bool ManaMatcher::doMatch(Cost::Symbols::const_reverse_iterator costIt, Cost::Symbols::const_reverse_iterator costEnd,
+int symbolRank(CostSymbol symbol)
+{
+	auto cv = colorValue(symbol.colors.colors());
+	if( cv > 0 ) return cv;
+
+	switch( symbol.specific ) {
+		case CostSymbol::snow: return 1000;
+		case CostSymbol::phyrexian: return 1001;
+		case CostSymbol::X:
+		case CostSymbol::Y:
+		case CostSymbol::Z:
+			return 10000;
+		default:
+			return 100 + symbol.generic;
+	}
+}
+
+bool ManaMatcher::tryPermutations(unsigned pos, Cost::Symbols const & symbols, ManaPool const & manaPool, Mana::Annotations annotations)
+{
+	if( pos == currentMatcher.size() ) {
+		// symbols will be sorted like colored,snow,P,generic,XYZ to increase the chance of having an early solution
+		auto currentSymbols = currentMatcher;
+		std::sort(currentSymbols.begin(),currentSymbols.end(),[](auto s1, auto s2) {
+			return symbolRank(s1) < symbolRank(s2);
+		});
+		// expand generic matchers
+
+		// clear status and try a match
+		// TODO move to a separate class with 'visited' and 'life'
+		visited.clear();
+		life = 0;
+		doMatch(currentSymbols.begin(),currentSymbols.end(),manaPool,annotations);
+	    return solutions.size() >= maxSolutions;
+	}
+
+	for( auto symbol : symbolMatchers(symbols[pos]) ) {
+		currentMatcher[pos] = symbol;
+		if( tryPermutations(pos+1,symbols,manaPool,annotations) ) return true;
+	}
+
+	return false;
+}
+
+bool ManaMatcher::doMatch(Cost::Symbols::const_iterator costIt, Cost::Symbols::const_iterator costEnd,
 		ManaPool const & manaPool, Mana::Annotations annotations)
 {
 	if( solutions.size() >= maxSolutions ) return true; // terminate early if all solutions were recorded
@@ -80,46 +126,44 @@ bool ManaMatcher::doMatch(Cost::Symbols::const_reverse_iterator costIt, Cost::Sy
 		return true;
 	}
 
-	// decouple and serialize a symbol matcher (e.g: W/P = list with [W P]. 2/W = [W 1 1]). use colored first
-	for( auto symbol : symbolMatchers(*costIt) ) {
-		if( symbol.specific == CostSymbol::X || symbol.specific == CostSymbol::Y || symbol.specific == CostSymbol::Z ) {
-			// just consume it
-			if( doMatch(std::next(costIt),costEnd,manaPool,annotations) ) {
-				return true;
-			}
-		} else
-		if( symbol.specific == CostSymbol::phyrexian ) {
-			life += 2;
-			if( doMatch(std::next(costIt),costEnd,manaPool,annotations) ) {
-				return true;
-			}
-			life -= 2;
-		} else
-		if( symbol.generic > 0 ) {
-			std::vector<ManaPool::ManaCRef> gen;
-			for( auto match : MatchRange{manaPool,visited,symbol,annotations} ) {
-				gen.push_back(match);
-				if( gen.size() >= symbol.generic ) break;
-			}
-			if( gen.size() < symbol.generic ) return false; // not enough to match generic mana
+	auto symbol = *costIt;
+	if( symbol.specific == CostSymbol::X || symbol.specific == CostSymbol::Y || symbol.specific == CostSymbol::Z ) {
+		// just consume it
+		if( doMatch(std::next(costIt),costEnd,manaPool,annotations) ) {
+			return true;
+		}
+	} else
+	if( symbol.specific == CostSymbol::phyrexian ) {
+		life += 2;
+		if( doMatch(std::next(costIt),costEnd,manaPool,annotations) ) {
+			return true;
+		}
+		life -= 2;
+	} else
+	if( symbol.generic > 0 ) {
+		std::vector<ManaPool::ManaCRef> gen;
+		for( auto match : MatchRange{manaPool,visited,symbol,annotations} ) {
+			gen.push_back(match);
+			if( gen.size() >= symbol.generic ) break;
+		}
+		if( gen.size() < symbol.generic ) return false; // not enough to match generic mana
 
-			for( auto elem : gen ) {
-				visited.insert(elem);
-			}
+		for( auto elem : gen ) {
+			visited.insert(elem);
+		}
+		if( doMatch(std::next(costIt),costEnd,manaPool,annotations) ) {
+			return true;
+		}
+		for( auto elem : gen ) {
+			visited.erase(elem);
+		}
+	} else {
+		for( auto match : MatchRange{manaPool,visited,symbol,annotations} ) {
+			visited.insert(match);
 			if( doMatch(std::next(costIt),costEnd,manaPool,annotations) ) {
 				return true;
 			}
-			for( auto elem : gen ) {
-				visited.erase(elem);
-			}
-		} else {
-			for( auto match : MatchRange{manaPool,visited,symbol,annotations} ) {
-				visited.insert(match);
-				if( doMatch(std::next(costIt),costEnd,manaPool,annotations) ) {
-					return true;
-				}
-				visited.erase(match);
-			}
+			visited.erase(match);
 		}
 	}
 

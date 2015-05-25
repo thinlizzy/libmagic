@@ -218,7 +218,6 @@ namespace tut {
 		ensure_not( bool(matcher.match(cost, pool)) );
 	}
 
-	// TODO fix failure
 	template<>
 	template<>
 	void testobject::test<15>()
@@ -292,7 +291,6 @@ namespace tut {
 		ensure_equals( matcher.match(cost, pool).getSolutions().size() , 4 );
 	}
 
-	// TODO fix failure
 	template<>
 	template<>
 	void testobject::test<20>()

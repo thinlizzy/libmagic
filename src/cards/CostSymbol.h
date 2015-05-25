@@ -10,7 +10,8 @@ using Cmc = unsigned;
 
 struct CostSymbol {
 	enum Specific {
-		X=1, Y, Z, phyrexian, snow,
+		snow=1, phyrexian,
+		X, Y, Z,
 	};
 	using Generic = unsigned char;
 
