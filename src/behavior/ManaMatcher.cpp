@@ -53,15 +53,17 @@ ManaMatcher & ManaMatcher::match(Cost const & cost, ManaPool const & manaPool, M
 
 	// early bail out on impossible solutions
 	if( manaPool.mana().size() < cost.minimumManaCost() ) return *this;
-
+/*
+	CostSymbolPermuter permuter;
+	permuter.tryPermutations(cost.symbols,[this,&manaPool,&annotations](Cost::Symbols const & symbols) -> bool {
+		SymbolMatcher matcher;
+		matcher.match(symbols,manaPool,annotations,maxSolutions,solutions);
+		return solutions.size() >= maxSolutions;
+	});
+*/
 	currentMatcher.resize(cost.symbols.size());
 	tryPermutations(0,cost.symbols,manaPool,annotations);
 	return *this;
-/*
-	// symbols are sorted like X-generic-snow-colored, so iteration is done in reverse order to match colors first, then snow and finally generic
-	doMatch(cost.symbols.rbegin(),cost.symbols.rend(),manaPool,annotations);
-	return *this;
-*/
 }
 
 int symbolRank(CostSymbol symbol)
@@ -89,10 +91,10 @@ bool ManaMatcher::tryPermutations(unsigned pos, Cost::Symbols const & symbols, M
 		std::sort(currentSymbols.begin(),currentSymbols.end(),[](auto s1, auto s2) {
 			return symbolRank(s1) < symbolRank(s2);
 		});
-		// expand generic matchers
+
+		// TODO expand generic matchers to have 1 (and remove that damned for loop). it will make multiple solutions available
 
 		// clear status and try a match
-		// TODO move to a separate class with 'visited' and 'life'
 		visited.clear();
 		life = 0;
 		doMatch(currentSymbols.begin(),currentSymbols.end(),manaPool,annotations);
