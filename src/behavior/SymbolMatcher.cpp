@@ -25,7 +25,7 @@ bool Symbol::doMatch(Cost::Symbols::const_iterator costIt, Cost::Symbols::const_
 
 	if( costIt == costEnd ) {
 		recordSolution();
-		return true;
+		return allDone();
 	}
 
 	auto symbol = *costIt;
@@ -41,24 +41,6 @@ bool Symbol::doMatch(Cost::Symbols::const_iterator costIt, Cost::Symbols::const_
 			return true;
 		}
 		life -= 2;
-	} else
-	if( symbol.generic > 0 ) {
-		std::vector<ManaPool::ManaCRef> gen;
-		for( auto match : MatchRange{*manaPool,visited,symbol,annotations} ) {
-			gen.push_back(match);
-			if( gen.size() >= symbol.generic ) break;
-		}
-		if( gen.size() < symbol.generic ) return false; // not enough to match generic mana
-
-		for( auto elem : gen ) {
-			visited.insert(elem);
-		}
-		if( doMatch(std::next(costIt),costEnd) ) {
-			return true;
-		}
-		for( auto elem : gen ) {
-			visited.erase(elem);
-		}
 	} else {
 		for( auto match : MatchRange{*manaPool,visited,symbol,annotations} ) {
 			visited.insert(match);

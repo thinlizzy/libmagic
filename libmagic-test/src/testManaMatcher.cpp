@@ -275,7 +275,6 @@ namespace tut {
 		ensure( bool(matcher.match(cost, pool)) );
 	}
 
-	// TODO fix failure
 	template<>
 	template<>
 	void testobject::test<19>()

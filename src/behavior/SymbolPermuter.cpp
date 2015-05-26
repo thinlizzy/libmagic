@@ -62,7 +62,17 @@ bool Permuter::tryPermutations(size_t pos)
 			return symbolRank(s1) < symbolRank(s2);
 		});
 
-		// TODO expand generic matchers to have 1 (and remove that damned for loop). it will make multiple solutions available
+		// expand generic matchers to have only 1. it will make multiple solutions available
+		auto generic = 0;
+		for( auto & symbol : currentSymbols ) {
+			if( symbol.generic > 1 ) {
+				generic += symbol.generic-1;
+				symbol.generic = 1;
+			}
+		}
+		for( auto g = 0; g != generic; ++g ) {
+			currentSymbols.push_back(CostSymbol(1));
+		}
 
 		done = solver(currentSymbols);
 	    return done;

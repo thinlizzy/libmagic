@@ -12,7 +12,7 @@ namespace matcher {
 struct Solution {
 	std::vector<ManaPool::ManaCRef> mana;
 	Life life;
-	bool operator==(Solution const & sol) const { return mana == sol.mana && life == sol.life; }
+	bool operator==(Solution const & sol) const;
 };
 
 using Solutions = std::vector<Solution>;
