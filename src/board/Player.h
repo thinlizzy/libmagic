@@ -5,6 +5,7 @@
 #include "OwnedCards.h"
 #include "Counter.h"
 #include "ManaPool.h"
+#include "SimpleTypes.h"
 #include "../cards/Colors.h"
 #include <unordered_map>
 #include <string>
@@ -19,7 +20,7 @@ class Player {
 public:
     OwnedCards cards;
 
-	int life;
+	Life life;
 	ManaPool manaPool;
 
     std::unordered_map<Counter,unsigned> counters;
