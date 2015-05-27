@@ -34,6 +34,7 @@ struct CostSymbol {
     Color firstColor() const;
 
 	bool operator==(CostSymbol const & mp) const;
+	bool operator!=(CostSymbol const & mp) const;
 };
 
 } /* namespace mtg */

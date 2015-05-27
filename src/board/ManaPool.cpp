@@ -8,7 +8,6 @@ void ManaPool::clear()
 {
 	byColor.clear();
 	bySource.clear();
-	byAnnotation.clear();
 	pool.clear();
 }
 
@@ -20,15 +19,20 @@ void ManaPool::add(Color color)
 
 void ManaPool::add(Color color, Mana::Source source, std::initializer_list<Mana::Annotation> annotations)
 {
-	pool.push_back({color,source});
+	Mana::Annotations packedAnnotations{};
+	for( auto annotation : annotations ) {
+		packedAnnotations |= Mana::Annotations(annotation);
+	}
+	add(color,source,packedAnnotations);
+}
+
+void ManaPool::add(Color color, Mana::Source source, Mana::Annotations annotations)
+{
+	pool.push_back({color,source,annotations});
 	auto manaIt = std::prev(pool.end());
 	byColor.insert({color,manaIt});
 	if( source != 0 ) {
 		bySource.insert({source,manaIt});
-	}
-	for( auto annotation : annotations ) {
-		manaIt->annotations |= annotation;
-		byAnnotation.insert({annotation,manaIt});
 	}
 }
 
@@ -40,11 +44,6 @@ auto ManaPool::getByColor(Color color) const -> ColorRange
 auto ManaPool::getBySource(Mana::Source source) const -> SourceRange
 {
 	return SourceRange{bySource.equal_range(source)};
-}
-
-auto ManaPool::getByAnnotation(Mana::Annotation annotation) const -> PairRange<ByAnnotationCIt,IteratorSecond<ByAnnotationCIt>>
-{
-	return PairRange<ByAnnotationCIt,IteratorSecond<ByAnnotationCIt>>{byAnnotation.equal_range(annotation)};
 }
 
 template<typename C, typename T>
@@ -65,15 +64,6 @@ void ManaPool::remove(ManaCRef manaRef)
 
 	if( manaRef->source != 0 ) {
 		removeFrom(bySource,manaRef->source,manaRef);
-	}
-
-	if( manaRef->annotations != 0 ) {
-		for( unsigned a = 1; a <= Mana::lastAnnotation; a<<=1 ) {
-			auto annotation = static_cast<Mana::Annotation>(manaRef->annotations & a);
-			if( annotation != 0 ) {
-				removeFrom(byAnnotation,annotation,manaRef);
-			}
-		}
 	}
 
 	pool.erase(manaRef);

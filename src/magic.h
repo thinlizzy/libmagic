@@ -1,4 +1,6 @@
 #include "behavior/ManaMatcher.h"
+#include "behavior/SymbolMatcher.h"
+#include "behavior/SymbolPermuter.h"
 
 #include "board/Battlefield.h"
 #include "board/Permanent.h"

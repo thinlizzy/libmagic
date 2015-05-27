@@ -24,11 +24,6 @@ namespace {
 			auto bs = pool.getBySource(source);
 			return std::distance(bs.begin(),bs.end());
 		}
-
-		int count(mtg::Mana::Annotation annotation) {
-			auto ba = pool.getByAnnotation(annotation);
-			return std::distance(ba.begin(),ba.end());
-		}
 	};
 }
 
@@ -109,22 +104,6 @@ namespace tut {
 			++ts;
 		}
 		ensure_equals( ts , 2 );
-
-		int taa = 0;
-		for( auto mana : pool.getByAnnotation(mtg::Mana::abilities) ) {
-			ensure( mana->annotations & mtg::Mana::abilities );
-			ensure( mana->color == mtg::Color::black || mana->color == mtg::Color::white );
-			++taa;
-		}
-		ensure_equals( taa , 2 );
-
-		int tar = 0;
-		for( auto mana : pool.getByAnnotation(mtg::Mana::artifact) ) {
-			ensure( mana->annotations & mtg::Mana::artifact );
-			ensure( mana->color == mtg::Color::white );
-			++tar;
-		}
-		ensure_equals( tar , 1 );
 	}
 
 	template<>
@@ -145,9 +124,6 @@ namespace tut {
 
 		ensure_equals( pool.mana().size() , 9 );
 		ensure_equals( count(mtg::Mana::snow) , 4 );
-		ensure_equals( count(mtg::Mana::abilities) , 2 );
-		ensure_equals( count(mtg::Mana::artifact) , 1 );
-		ensure_equals( count(mtg::Mana::upkeep) , 2 );
 
 		// remove the first (and the only) white mana
 		auto bc = pool.getByColor(mtg::Color::white);
@@ -157,17 +133,6 @@ namespace tut {
 		ensure_equals( count(mtg::Mana::snow) , 3 );
 		bc = pool.getByColor(mtg::Color::white);
 		ensure( bc.empty() );
-		ensure_equals( count(mtg::Mana::abilities) , 1 );
-		ensure_equals( count(mtg::Mana::artifact) , 0 );
-
-		auto ba = pool.getByAnnotation(mtg::Mana::abilities);
-		ensure( ! ba.empty() );
-		auto blackManaAbilities = *ba.begin();
-		ensure_equals( blackManaAbilities->color , mtg::Color::black );
-
-		pool.remove(blackManaAbilities);
-		ensure_equals( count(mtg::Mana::abilities) , 0 );
-		ensure_equals( count(mtg::Color::black) , 1 );
 	}
 }
 

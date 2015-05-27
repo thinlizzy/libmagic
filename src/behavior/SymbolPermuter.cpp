@@ -8,6 +8,7 @@ namespace matcher {
 void Permuter::tryPermutations(Cost::Symbols const & symbols, Solver solver)
 {
 	currentMatcher.resize(symbols.size());
+	matchers.clear();
 	this->symbols = &symbols;
 	this->solver = solver;
 	done = false;
@@ -62,6 +63,10 @@ bool Permuter::tryPermutations(size_t pos)
 			return symbolRank(s1) < symbolRank(s2);
 		});
 
+		// don't call solver if a matcher was already recorded
+		if( std::find(matchers.begin(),matchers.end(),currentSymbols) != matchers.end() ) return false;
+		matchers.push_back(currentSymbols);
+
 		// expand generic matchers to have only 1. it will make multiple solutions available
 		auto generic = 0;
 		for( auto & symbol : currentSymbols ) {
@@ -75,7 +80,7 @@ bool Permuter::tryPermutations(size_t pos)
 		}
 
 		done = solver(currentSymbols);
-	    return done;
+		return done;
 	}
 
 	for( auto symbol : symbolMatchers((*symbols)[pos]) ) {

@@ -73,4 +73,9 @@ bool CostSymbol::operator==(CostSymbol const & mp) const
 	return colors == mp.colors && generic == mp.generic && specific == mp.specific;
 }
 
+bool CostSymbol::operator!=(CostSymbol const & mp) const
+{
+	return ! (*this == mp);
+}
+
 } /* namespace mtg */

@@ -25,11 +25,9 @@ private:
 	ManaList pool;
 	std::unordered_multimap<Color, ManaRef> byColor;
 	std::unordered_multimap<Mana::Source, ManaRef, std::hash<int>> bySource;
-	std::unordered_multimap<Mana::Annotation, ManaRef, std::hash<unsigned>> byAnnotation;
 
 	using ByColorCIt = decltype(byColor)::const_iterator;
 	using BySourceCIt = decltype(bySource)::const_iterator;
-	using ByAnnotationCIt = decltype(byAnnotation)::const_iterator;
 public:
 	ManaPool() = default;
 
@@ -38,12 +36,12 @@ public:
 	using SourceRange = PairRange<BySourceCIt,IteratorSecond<BySourceCIt>>;
 	ColorRange getByColor(Color color) const;
 	SourceRange getBySource(Mana::Source source) const;
-	PairRange<ByAnnotationCIt,IteratorSecond<ByAnnotationCIt>> getByAnnotation(Mana::Annotation annotation) const;
 
 	void clear();
 
 	void add(Color color);
 	void add(Color color, Mana::Source source, std::initializer_list<Mana::Annotation> annotations);
+	void add(Color color, Mana::Source source, Mana::Annotations annotations);
 
 	void remove(ManaCRef manaRef);
 };

@@ -3,6 +3,7 @@
 
 #include "../cards/Cost.h"
 #include <functional>
+#include <vector>
 
 namespace mtg {
 
@@ -11,6 +12,7 @@ namespace matcher {
 class Permuter {
 	using Solver = std::function<bool(Cost::Symbols const &)>;
 	Cost::Symbols currentMatcher;
+	std::vector<Cost::Symbols> matchers;
 	Cost::Symbols const * symbols;
 	Solver solver;
 	bool done;

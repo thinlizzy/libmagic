@@ -89,20 +89,21 @@ std::ostream & operator<<(std::ostream & os, mtg::Color const & color)
 	}
 }
 
-std::ostream & operator<<(std::ostream & os, mtg::CostSymbol const & mp) {
+std::ostream & operator<<(std::ostream & os, mtg::CostSymbol const & symbol)
+{
     bool printed = false;
-	if( mp.specific != 0 ) {
+	if( symbol.specific != 0 ) {
 		if( printed ) os << '/';
-		char const specChar[] = " XYZPS";
-		os << specChar[mp.specific];
+		char const specChar[] = " SPXYZ";
+		os << specChar[symbol.specific];
 		printed = true;
 	}
-	if( mp.generic > 0 && mp.specific != mtg::CostSymbol::snow ) {
-		os << unsigned(mp.generic);
+	if( symbol.generic > 0 && symbol.specific != mtg::CostSymbol::snow ) {
+		os << unsigned(symbol.generic);
 		printed = true;
 	}
 	for( auto color : ColorList() ) {
-		if( mp.hasColor(color) ) {
+		if( symbol.hasColor(color) ) {
 			if( printed ) os << '/';
 			os << mtg::colorText(color);
 			printed = true;
@@ -114,12 +115,14 @@ std::ostream & operator<<(std::ostream & os, mtg::CostSymbol const & mp) {
     return os;
 }
 
-std::ostream & operator<<(std::ostream & os, mtg::Cost const & cost) {
+std::ostream & operator<<(std::ostream & os, mtg::Cost const & cost)
+{
     std::copy(cost.symbols.begin(),cost.symbols.end(),std::ostream_iterator<mtg::CostSymbol>(os));
     return os;
 }
 
-std::ostream & operator<<(std::ostream & os, CardStat const & stat) {
+std::ostream & operator<<(std::ostream & os, CardStat const & stat)
+{
     os << stat.name << '|';
     if( stat.colors_ ) {
         os << *stat.colors_ << '|';
@@ -144,7 +147,8 @@ std::ostream & operator<<(std::ostream & os, CardStat const & stat) {
     return os;
 }
 
-std::ostream & operator<<(std::ostream & os, Card const & card) {
+std::ostream & operator<<(std::ostream & os, Card const & card)
+{
     os << card.id << ' ';
     os << card.expansion << ' ';
     os << card.rarity << ' ';
@@ -156,7 +160,7 @@ std::ostream & operator<<(std::ostream & os, Card const & card) {
     return os;
 }
 
-}
+} // namespace mtg
 
 /*
 inline int showcolors_i() {

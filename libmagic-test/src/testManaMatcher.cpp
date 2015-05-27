@@ -21,7 +21,7 @@ namespace tut {
 		mtg::Cost cost = mtg::parseCost("3RR");
 		mtg::ManaMatcher matcher;
 		ensure_not( bool(matcher.match(cost, pool)) );
-		ensure_equals( matcher.getSolutions().size() , 0 );
+		ensure_equals( matcher.getSolutions().size() , 0u );
 	}
 
 	template<>
@@ -35,10 +35,10 @@ namespace tut {
 		mtg::Cost cost = mtg::parseCost("1RR");
 		mtg::ManaMatcher matcher;
 		ensure( bool(matcher.match(cost, pool)) );
-		ensure_equals( matcher.getSolutions().size() , 1 );
+		ensure_equals( matcher.getSolutions().size() , 1u );
 		auto & solution = matcher.getSolutions()[0];
 		ensure_equals( solution.life , 0 );
-		ensure_equals( solution.mana.size() , 3 );
+		ensure_equals( solution.mana.size() , 3u );
 		ensure_equals( *solution.mana[0] , mtg::Mana{mtg::Color::blue} );
 		ensure_equals( *solution.mana[1] , mtg::Mana{mtg::Color::red} );
 		ensure_equals( *solution.mana[2] , mtg::Mana{mtg::Color::red} );
@@ -56,7 +56,7 @@ namespace tut {
 
 		mtg::ManaMatcher matcher2(2);
 		matcher2.match(cost, pool);
-		ensure_equals( matcher2.getSolutions().size() , 1 );
+		ensure_equals( matcher2.getSolutions().size() , 1u );
 	}
 
 	template<>
@@ -303,10 +303,109 @@ namespace tut {
 		ensure( bool(matcher.match(cost, pool)) );
 	}
 
-	// TODO add more tests (annotations, W/P)
+	template<>
+	template<>
+	void testobject::test<21>()
+	{
+		set_test_name("phyrexian has mana");
+		pool.add(mtg::Color::black);
+		pool.add(mtg::Color::black);
+		pool.add(mtg::Color::blue);
+		mtg::Cost cost = mtg::parseCost("{2}{U/P}");
+		mtg::ManaMatcher matcher;
+		ensure( bool(matcher.match(cost, pool)) );
+		auto & solution = matcher.getSolutions()[0];
+		ensure_equals( solution.life , 0 );
+		ensure_equals( solution.mana.size() , 3u );
+		ensure_equals( *solution.mana[0] , mtg::Mana{mtg::Color::blue} );
+		ensure_equals( *solution.mana[1] , mtg::Mana{mtg::Color::black} );
+		ensure_equals( *solution.mana[2] , mtg::Mana{mtg::Color::black} );
+	}
 
-	// TODO test for more than one solution with phyrexian, generic and multiple
+	template<>
+	template<>
+	void testobject::test<22>()
+	{
+		set_test_name("phyrexian no mana");
+		pool.add(mtg::Color::black);
+		pool.add(mtg::Color::black);
+		mtg::Cost cost = mtg::parseCost("{2}{U/P}");
+		mtg::ManaMatcher matcher;
+		ensure( bool(matcher.match(cost, pool)) );
+		auto & solution = matcher.getSolutions()[0];
+		ensure_equals( solution.life , 2 );
+		ensure_equals( solution.mana.size() , 2u );
+		ensure_equals( *solution.mana[0] , mtg::Mana{mtg::Color::black} );
+		ensure_equals( *solution.mana[1] , mtg::Mana{mtg::Color::black} );
+	}
+
+	template<>
+	template<>
+	void testobject::test<23>()
+	{
+		set_test_name("Moltensteel Dragon multiple solutions");
+		pool.add(mtg::Color::colorless);
+		pool.add(mtg::Color::colorless);
+		pool.add(mtg::Color::red);
+		pool.add(mtg::Color::colorless);
+		pool.add(mtg::Color::colorless);
+		mtg::Cost cost = mtg::parseCost("{4}{R/P}{R/P}");
+		mtg::ManaMatcher matcher(4);
+		ensure( bool(matcher.match(cost, pool)) );
+		ensure_equals( matcher.getSolutions().size() , 3u );
+		auto & solution0 = matcher.getSolutions()[0];
+		ensure_equals( solution0.life , 2 );
+		ensure_equals( solution0.mana.size() , 5u );
+		ensure_equals( *solution0.mana[0] , mtg::Mana{mtg::Color::colorless} );
+		ensure_equals( *solution0.mana[4] , mtg::Mana{mtg::Color::red} );
+		auto & solution1 = matcher.getSolutions()[1];
+		ensure_equals( solution1.life , 4 );
+		ensure_equals( solution1.mana.size() , 4u );
+		ensure_equals( *solution0.mana[0] , mtg::Mana{mtg::Color::colorless} );
+		ensure_equals( *solution0.mana[4] , mtg::Mana{mtg::Color::red} );
+		auto & solution2 = matcher.getSolutions()[2];
+		ensure_equals( solution2.life , 4 );
+		ensure_equals( solution2.mana.size() , 4u );
+		ensure_equals( *solution2.mana[0] , mtg::Mana{mtg::Color::colorless} );
+		ensure_equals( *solution2.mana[3] , mtg::Mana{mtg::Color::colorless} );
+	}
+
+	template<>
+	template<>
+	void testobject::test<24>()
+	{
+		set_test_name("match single color annotated");
+		pool.add(mtg::Color::red);
+		pool.add(mtg::Color::red,{},mtg::Mana::artifact);
+		pool.add(mtg::Color::blue);
+		mtg::Cost cost = mtg::parseCost("1RR");
+		mtg::ManaMatcher matcher;
+		ensure_not( bool(matcher.match(cost,pool)) );
+		ensure( bool(matcher.match(cost,pool,mtg::Mana::artifact)) );
+		ensure_not( bool(matcher.match(cost,pool,mtg::Mana::creature)) );
+		ensure( bool(matcher.match(cost,pool,mtg::Mana::artifact | mtg::Mana::creature)) );
+	}
+
+	template<>
+	template<>
+	void testobject::test<25>()
+	{
+		set_test_name("match single color annotated multiple solutions");
+		pool.add(mtg::Color::red);
+		pool.add(mtg::Color::red,{},{mtg::Mana::abilities,mtg::Mana::creature});
+		pool.add(mtg::Color::red);
+		pool.add(mtg::Color::blue);
+		mtg::Cost cost = mtg::parseCost("1RR");
+		mtg::ManaMatcher matcher{4};
+		ensure( bool(matcher.match(cost,pool)) );
+		ensure_equals( matcher.getSolutions().size() , 1u );
+		ensure( bool(matcher.match(cost,pool,mtg::Mana::artifact)) );
+		ensure_equals( matcher.getSolutions().size() , 1u );
+		ensure( bool(matcher.match(cost,pool,mtg::Mana::creature)) );
+		ensure_equals( matcher.getSolutions().size() , 1u );
+		ensure( bool(matcher.match(cost,pool,mtg::Mana::artifact | mtg::Mana::creature)) );
+		ensure_equals( matcher.getSolutions().size() , 1u );
+		ensure( bool(matcher.match(cost,pool,mtg::Mana::artifact | mtg::Mana::abilities | mtg::Mana::creature)) );
+		ensure_equals( matcher.getSolutions().size() , 3u );
+	}
 }
-
-
-
