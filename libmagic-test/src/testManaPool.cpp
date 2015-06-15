@@ -117,9 +117,9 @@ namespace tut {
 		pool.add(mtg::Color::black, {}, {mtg::Mana::abilities});
 		pool.add(mtg::Color::white, mtg::Mana::snow, {mtg::Mana::abilities, mtg::Mana::artifact, });
 		pool.add(mtg::Color::green);
-		pool.add(mtg::Color::green, mtg::Mana::snow, {mtg::Mana::upkeep});
+		pool.add(mtg::Color::green, mtg::Mana::snow, {mtg::Mana::cumulativeUpkeepCost});
 		pool.add(mtg::Color::green, mtg::Mana::snow, {mtg::Mana::spells});
-		pool.add(mtg::Color::red, {}, {mtg::Mana::upkeep, mtg::Mana::creature});
+		pool.add(mtg::Color::red, {}, {mtg::Mana::cumulativeUpkeepCost, mtg::Mana::creature});
 		pool.add(mtg::Color::blue);
 
 		ensure_equals( pool.mana().size() , 9 );

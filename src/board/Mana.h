@@ -9,9 +9,10 @@ struct Mana {
 	enum Source { snow = 1, };
 	enum Annotation : unsigned {
 		spells = 1, abilities = 2,
-		upkeep = 4,
+		cumulativeUpkeepCost = 4,
 		artifact = 8, creature = 16,
 
+		firstAnnotation = 1,
 		lastAnnotation = 16,
 	};
 	using Annotations = unsigned;
