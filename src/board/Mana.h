@@ -7,6 +7,8 @@ namespace mtg {
 
 struct Mana {
 	enum Source { snow = 1, };
+
+	// TODO remove these annotations from here and move them to the rules engine
 	enum Annotation : unsigned {
 		spells = 1, abilities = 2,
 		cumulativeUpkeepCost = 4,
@@ -33,6 +35,7 @@ struct Mana {
 		return !operator==(mana);
 	}
 
+	// TODO move this checking to the matcher. pass a functor to it that filters the mana. the functor will consult the rules engine (a map from mana ref to some custom annotation system)
 	bool allowsRestrictions(Annotations restrictions) const {
 		return (annotations & restrictions) == annotations;
 	}

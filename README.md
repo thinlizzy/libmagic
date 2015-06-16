@@ -15,6 +15,7 @@ TUT can be found here: http://mrzechonek.github.io/tut-framework/
 
 # TODO
 - add a makefile (compile and install)
+- move annotations/restrictions logic out from Mana and ManaPool. pass a filtering functor to the Matcher, instead
 - Abilities (model, not rules)
 - more nuts and bolts for a basic rules engine (e.g: matchers for battlefield and other zones)
 - queries over decks, sets and the entire card pool
