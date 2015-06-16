@@ -6,13 +6,13 @@ namespace mtg {
 
 namespace matcher {
 
-bool Symbol::match(Cost::Symbols const & symbols, ManaPool const & manaPool, Mana::Annotations annotations,
+bool Symbol::match(Cost::Symbols const & symbols, ManaPool const & manaPool, ManaFilter manaFilter,
 		size_t maxSolutions, Solutions & solutions)
 {
 	life = 0;
 	visited.clear();
 	this->manaPool = &manaPool;
-	this->annotations = annotations;
+	this->manaFilter = manaFilter;
 	this->maxSolutions = maxSolutions;
 	this->solutions = &solutions;
 	doMatch(symbols.begin(),symbols.end());
@@ -42,7 +42,7 @@ bool Symbol::doMatch(Cost::Symbols::const_iterator costIt, Cost::Symbols::const_
 		}
 		life -= 2;
 	} else {
-		for( auto match : MatchRange{*manaPool,visited,symbol,annotations} ) {
+		for( auto match : MatchRange{*manaPool,visited,symbol,manaFilter} ) {
 			visited.insert(match);
 			if( doMatch(std::next(costIt),costEnd) ) {
 				return true;

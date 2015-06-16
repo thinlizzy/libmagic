@@ -39,10 +39,7 @@ public:
 
 	void clear();
 
-	// TODO remove all three and have only ManaRef add(Color color, Mana::Source source); instead
-	void add(Color color);
-	void add(Color color, Mana::Source source, std::initializer_list<Mana::Annotation> annotations);
-	void add(Color color, Mana::Source source, Mana::Annotations annotations);
+	ManaRef add(Color color, Mana::Source source = {});
 
 	void remove(ManaCRef manaRef);
 };

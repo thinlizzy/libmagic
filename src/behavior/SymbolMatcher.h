@@ -5,6 +5,7 @@
 #include "../board/SimpleTypes.h"
 #include "../cards/Cost.h"
 #include "MatcherSolutions.h"
+#include "ManaFilter.h"
 
 namespace mtg {
 
@@ -14,11 +15,11 @@ class Symbol {
 	Life life;
 	ManaPool::ManaSet visited;
 	ManaPool const * manaPool;
-	Mana::Annotations annotations;
+	ManaFilter manaFilter;
 	size_t maxSolutions;
 	Solutions * solutions;
 public:
-	bool match(Cost::Symbols const & symbols, ManaPool const & manaPool, Mana::Annotations annotations,
+	bool match(Cost::Symbols const & symbols, ManaPool const & manaPool, ManaFilter manaFilter,
 			size_t maxSolutions, Solutions & solutions);
 private:
 	bool doMatch(Cost::Symbols::const_iterator costIt, Cost::Symbols::const_iterator costEnd);

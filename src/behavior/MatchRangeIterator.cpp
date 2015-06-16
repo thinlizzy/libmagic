@@ -3,6 +3,8 @@
 
 namespace mtg {
 
+namespace matcher {
+
 MatchRangeIterator::MatchRangeIterator(MatchRangeIterator const & mri):
 	s(mri.s ? mri.s->clone() : nullptr)
 {}
@@ -45,13 +47,13 @@ class MatchRangeIteratorSnow: public MatchRangeIteratorStrategy {
 	ManaPool::SourceRange snowRange;
 	decltype(snowRange)::Iterator pos;
 	ManaPool::ManaSet const & visited;
-	Mana::Annotations annotations;
+	ManaFilter manaFilter;
 public:
-	MatchRangeIteratorSnow(ManaPool const & manaPool, ManaPool::ManaSet const & visited, Mana::Annotations annotations):
+	MatchRangeIteratorSnow(ManaPool const & manaPool, ManaPool::ManaSet const & visited, ManaFilter manaFilter):
 		snowRange(manaPool.getBySource(Mana::snow)),
 		pos(snowRange.begin()),
 		visited(visited),
-		annotations(annotations)
+		manaFilter(manaFilter)
 	{
 		doNext();
 	}
@@ -68,7 +70,7 @@ public:
 	}
 private:
 	void doNext() {
-		while( hasNext() && (visited.count(*pos) || ! (**pos).allowsRestrictions(annotations)) ) {
+		while( hasNext() && (visited.count(*pos) || manaFilter(*pos)) ) {
 			++pos;
 		}
 	}
@@ -78,13 +80,13 @@ class MatchRangeIteratorColor: public MatchRangeIteratorStrategy {
 	ManaPool::ColorRange colorRange;
 	decltype(colorRange)::Iterator pos;
 	ManaPool::ManaSet const & visited;
-	Mana::Annotations annotations;
+	ManaFilter manaFilter;
 public:
-	MatchRangeIteratorColor(ManaPool const & manaPool, ManaPool::ManaSet const & visited, Mana::Annotations annotations, Color color):
+	MatchRangeIteratorColor(ManaPool const & manaPool, ManaPool::ManaSet const & visited, ManaFilter manaFilter, Color color):
 		colorRange(manaPool.getByColor(color)),
 		pos(colorRange.begin()),
 		visited(visited),
-		annotations(annotations)
+		manaFilter(manaFilter)
 	{
 		doNext();
 	}
@@ -101,7 +103,7 @@ public:
 	}
 private:
 	void doNext() {
-		while( hasNext() && (visited.count(*pos) || ! (**pos).allowsRestrictions(annotations)) ) {
+		while( hasNext() && (visited.count(*pos) || manaFilter(*pos)) ) {
 			++pos;
 		}
 	}
@@ -110,13 +112,13 @@ private:
 class MatchRangeIteratorGeneric: public MatchRangeIteratorStrategy {
 	ManaPool::ManaCRef pos,end;
 	ManaPool::ManaSet const & visited;
-	Mana::Annotations annotations;
+	ManaFilter manaFilter;
 public:
-	MatchRangeIteratorGeneric(ManaPool const & manaPool, ManaPool::ManaSet const & visited, Mana::Annotations annotations):
+	MatchRangeIteratorGeneric(ManaPool const & manaPool, ManaPool::ManaSet const & visited, ManaFilter manaFilter):
 		pos(manaPool.mana().begin()),
 		end(manaPool.mana().end()),
 		visited(visited),
-		annotations(annotations)
+		manaFilter(manaFilter)
 	{
 		doNext();
 	}
@@ -133,30 +135,30 @@ public:
 	}
 private:
 	void doNext() {
-		while( hasNext() && (visited.count(pos) || ! (*pos).allowsRestrictions(annotations)) ) {
+		while( hasNext() && (visited.count(pos) || manaFilter(pos)) ) {
 			++pos;
 		}
 	}
 };
 
 std::unique_ptr<MatchRangeIteratorStrategy> matchRangeIteratorFactory(ManaPool const & manaPool,
-		ManaPool::ManaSet const & visited, CostSymbol symbol, Mana::Annotations annotations)
+		ManaPool::ManaSet const & visited, CostSymbol symbol, ManaFilter manaFilter)
 {
 	// phyrexian was already dealt with and X, Y and Z will be ignored for simplicity, so only snow matters for specific mana.
 	if( symbol.specific == CostSymbol::snow ) {
-		return std::make_unique<MatchRangeIteratorSnow>(manaPool,visited,annotations);
+		return std::make_unique<MatchRangeIteratorSnow>(manaPool,visited,manaFilter);
 	}
 	if( symbol.generic > 0 ) {
-		return std::make_unique<MatchRangeIteratorGeneric>(manaPool,visited,annotations);
+		return std::make_unique<MatchRangeIteratorGeneric>(manaPool,visited,manaFilter);
 	}
-	return std::make_unique<MatchRangeIteratorColor>(manaPool,visited,annotations,symbol.firstColor());
+	return std::make_unique<MatchRangeIteratorColor>(manaPool,visited,manaFilter,symbol.firstColor());
 }
 
 //
 
 MatchRange::MatchRange(ManaPool const & manaPool, ManaPool::ManaSet const & visited,
-		CostSymbol symbol, Mana::Annotations annotations):
-	beg(matchRangeIteratorFactory(manaPool,visited,symbol,annotations))
+		CostSymbol symbol, ManaFilter manaFilter):
+	beg(matchRangeIteratorFactory(manaPool,visited,symbol,manaFilter))
 {}
 
 MatchRangeIterator MatchRange::begin()
@@ -168,5 +170,7 @@ MatchRangeIterator MatchRange::end()
 {
 	return MatchRangeIterator{};
 }
+
+} /* namespace matcher */
 
 }

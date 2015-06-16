@@ -11,29 +11,15 @@ void ManaPool::clear()
 	pool.clear();
 }
 
-void ManaPool::add(Color color)
+auto ManaPool::add(Color color, Mana::Source source) -> ManaRef
 {
-	pool.push_back({color});
-	byColor.insert({color,std::prev(pool.end())});
-}
-
-void ManaPool::add(Color color, Mana::Source source, std::initializer_list<Mana::Annotation> annotations)
-{
-	Mana::Annotations packedAnnotations{};
-	for( auto annotation : annotations ) {
-		packedAnnotations |= Mana::Annotations(annotation);
-	}
-	add(color,source,packedAnnotations);
-}
-
-void ManaPool::add(Color color, Mana::Source source, Mana::Annotations annotations)
-{
-	pool.push_back({color,source,annotations});
-	auto manaIt = std::prev(pool.end());
-	byColor.insert({color,manaIt});
+	pool.push_back({color,source});
+	auto manaRef = std::prev(pool.end());
+	byColor.insert({color,manaRef});
 	if( source != 0 ) {
-		bySource.insert({source,manaIt});
+		bySource.insert({source,manaRef});
 	}
+	return manaRef;
 }
 
 auto ManaPool::getByColor(Color color) const -> ColorRange

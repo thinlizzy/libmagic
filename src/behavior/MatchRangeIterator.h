@@ -5,8 +5,11 @@
 #include <iterator>
 #include "../board/ManaPool.h"
 #include "../cards/CostSymbol.h"
+#include "ManaFilter.h"
 
 namespace mtg {
+
+namespace matcher {
 
 class MatchRangeIteratorStrategy {
 public:
@@ -34,10 +37,12 @@ class MatchRange {
 	MatchRangeIterator beg;
 public:
 	MatchRange(ManaPool const & manaPool, ManaPool::ManaSet const & visited,
-			CostSymbol symbol, Mana::Annotations annotations);
+			CostSymbol symbol, ManaFilter manaFilter);
 	MatchRangeIterator begin();
 	MatchRangeIterator end();
 };
+
+} /* namespace matcher */
 
 }
 

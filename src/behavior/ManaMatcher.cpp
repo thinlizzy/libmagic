@@ -4,25 +4,21 @@
 
 namespace mtg {
 
-// TODO after implementation, consider removing indices for annotated mana. they seem useless
+namespace matcher {
 
-// return all (non-visited) mana pool units for a symbol - use the indices (color,snow) to be more greedy
-// generic mana and even colored mana can match a lot of combinations
-// for each tested group, it needs to match mana.allowsRestrictions(annotations)
-
-ManaMatcher::ManaMatcher(size_t maxSolutions):
+Mana::Mana(size_t maxSolutions):
 	maxSolutions(maxSolutions)
 {
 	solutions.reserve(maxSolutions);
 }
 
-ManaMatcher & ManaMatcher::match(Cost const & cost, ManaPool const & manaPool, Mana::Annotations annotations)
+Mana & Mana::match(Cost const & cost, ManaPool const & manaPool, ManaFilter manaFilter)
 {
 	solutions.clear();
 
 	// test the obvious solution
 	if( cost.convertedManaCost() == 0 ) {
-		matcher::Solution solution;
+		Solution solution;
 		solution.life = 0;
 		solutions.push_back(std::move(solution));
 		return *this;
@@ -31,14 +27,16 @@ ManaMatcher & ManaMatcher::match(Cost const & cost, ManaPool const & manaPool, M
 	// early bail out on impossible solutions
 	if( manaPool.mana().size() < cost.minimumManaCost() ) return *this;
 
-	matcher::Permuter permuter;
-	permuter.tryPermutations(cost.symbols,[this,&manaPool,&annotations](Cost::Symbols const & symbols) -> bool {
-		matcher::Symbol matcher;
-		matcher.match(symbols,manaPool,annotations,maxSolutions,solutions);
+	Permuter permuter;
+	permuter.tryPermutations(cost.symbols,[this,&manaPool,&manaFilter](Cost::Symbols const & symbols) -> bool {
+		Symbol matcher;
+		matcher.match(symbols,manaPool,manaFilter,maxSolutions,solutions);
 		return solutions.size() >= maxSolutions;
 	});
 
 	return *this;
 }
+
+} /* namespace matcher */
 
 } /* namespace mtg */

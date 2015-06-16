@@ -27,9 +27,7 @@ std::ostream & operator<<(std::ostream & os, PermanentIt permIt) { return os << 
 
 std::ostream & operator<<(std::ostream & os, Mana const & mana)
 {
-	return os << mana.color
-			<< " source " << mana.source
-			<< " annotations " << mana.annotations;
+	return os << mana.color << " source " << mana.source;
 }
 
 }
